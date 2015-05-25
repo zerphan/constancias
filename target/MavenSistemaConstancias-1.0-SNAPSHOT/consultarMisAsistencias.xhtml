@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./WEB-INF/plantillas/publico.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">   
+    <ui:define name="contenido">        
+        <div class="container">
+
+            <div class="col-md-12">
+                <br/>
+                <h1>Consultar mis asistencias</h1>
+                <hr/>
+                <p class="justificado">
+                    <strong>Instrucciones:</strong> En ésta sección puedes descargar tus constancias de asistencia, ingresa el email con el cual registraste tus asistencias a los seminarios y presiona el boton buscar.
+                </p><br/>                    
+            </div>
+            <div class="col-md-12">
+                <h:form >
+                    <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"/> </span>
+                                <p:inputText styleClass="form-control"
+                                             id="inputEmail"
+                                             value="#{asistentesBean.currentAsistente.email}"
+                                             required="true"  requiredMessage="El email es requerido"
+                                             placeholder="Ingresa tu email"
+                                             validatorMessage="Ingresa un email válido"
+                                             > 
+                                    <f:validateRegex
+                                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                </p:inputText>
+                            </div>
+                            <p:message for="inputEmail"/>
+                        </div>
+                        <div class="col-lg-2">
+                            <p:commandLink  action="#{asistentesBean.findByEmail()}"                                  
+                                            ajax="true"
+                                            update="@form">
+                                <button type="button" class="btn btn-primary  btn-block"> <i class="fa fa-search"/> Buscar </button>
+                            </p:commandLink>
+                            <!--   update="@form,@([id$=resultadoBusqueda]),@([id$=listaConstancias])" -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 center_content">
+                            <h:panelGroup id="detalleCreditos" rendered="#{asistentesBean.listFilteredAsistentes.size() gt 0}">
+                                <br/>
+                                <div  class="panel panel-default">
+                                    <div class="panel-heading ">
+                                        <div class="panel-title "><h5>DETALLES DE MIS CREDITOS</h5></div>
+                                    </div>
+                                    <div class="panel-body">
+                                        Total de asistencias: <strong>#{asistentesBean.listFilteredAsistentes.size()} asistencia(s)</strong>
+                                        <br/>
+                                        Total de horas: <strong>#{asistentesBean.horasAsistencia} horas</strong>
+                                        <br/>
+                                        Total de creditos:  <strong>#{asistentesBean.creditos} creditos</strong>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h:panelGroup rendered="#{(asistentesBean.asistentesList ne null) and not empty(asistentesBean.asistentesList) }">
+                                <p:dataTable value="#{asistentesBean.asistentesList}"
+                                             tableStyle="font-size: 13px;"
+                                             emptyMessage="Sin resultados"
+                                             styleClass="ui-datatable-hor-scroll"
+                                             paginatorAlwaysVisible="true"                             
+                                             paginatorPosition="bottom"
+                                             paginator="true"
+                                             tableStyleClass="text-center"  
+                                             var="var">
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Mis asistencias "/>  
+                                    </f:facet>         
+
+                                    <p:column style="min-width: 200px">
+                                        <f:facet name="header">  
+                                            <p:outputLabel value="Constancia" />  
+                                        </f:facet>  
+                                        <p:commandLink action="#{asistentesBean.exportarConstancia()}"
+                                                       ajax="false">
+                                            <f:setPropertyActionListener value="#{var}"                                                         
+                                                                         target="#{asistentesBean.currentAsistente}"/>
+                                            <button class="btn btn-primary">
+                                                <i class="fa fa-download"/> Descargar
+                                            </button>
+
+                                        </p:commandLink>                      
+                                    </p:column>
+
+                                    <p:column style="min-width: 200px">
+                                        <f:facet name="header">  
+                                            <p:outputLabel value="Seminario" />  
+                                        </f:facet>  
+                                        #{var.seminario.tituloPonencia}                         
+                                    </p:column>
+                                    <p:column style="min-width: 200px">
+                                        <f:facet name="header">  
+                                            <p:outputLabel value="Asistente" />  
+                                        </f:facet>  
+                                        #{var.nombre} #{var.apellidoPaterno} #{var.apellidoMaterno}                         
+                                    </p:column>
+                                    <p:column style="max-width: 150px; min-width: 130px">
+                                        <f:facet name="header">  
+                                            <p:outputLabel value="Fecha" />  
+                                        </f:facet>  
+                                        #{var.seminario.fechaInicio.dayOfMonth().get()}/#{var.seminario.fechaInicio.monthOfYear().getAsText()}/#{var.seminario.fechaInicio.year().get()}
+                                    </p:column> 
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+        </div>
+        <!-- /.container -->
+        <script>
+            $(document).ready(function() {
+                $("#consultarMisConstancias").addClass("active");
+            });
+        </script>
+    </ui:define>
+
+</ui:composition>

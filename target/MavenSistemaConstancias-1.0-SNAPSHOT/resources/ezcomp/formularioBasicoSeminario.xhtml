@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"          
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="seminario" required="true" type="modelo.entidades.Seminario"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="form-group">
+            <label class="col-lg-2 control-label">Título Ponencia</label>
+            <div class="col-lg-10">
+                <p:inputText styleClass="form-control" 
+                             id="inputTituloPonencia"
+                             value="#{cc.attrs.seminario.tituloPonencia}" 
+                             required="true" requiredMessage="El título de la ponencia es requerido"
+                             pt:placeholder="Ingresa el título de la ponencia"
+                             />
+                <p:message for="inputTituloPonencia"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" >Resumen</label>
+            <div class="col-lg-10">
+                <p:inputTextarea styleClass="form-control"
+                                 id="inputResumenPonencia"
+                                 value="#{cc.attrs.seminario.resumen}"
+                                 required="true"  requiredMessage="El resumen es requerido"
+                                 pt:placeholder="Ingresa el resumen"
+                                 rows="8"/>
+                <p:message for="inputResumenPonencia"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label" >Lugar</label>
+            <div class="col-lg-10">
+                <p:inputText styleClass="form-control"
+                             id="inputLugar"
+                             value="#{cc.attrs.seminario.direccion}"
+                             required="true"  requiredMessage="El lugar es requerido"
+                             pt:placeholder="Ingresa el lugar"
+                             />
+                <p:message for="inputLugar" />
+            </div>
+        </div>
+    </cc:implementation>
+</html>

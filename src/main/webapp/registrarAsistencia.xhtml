@@ -1,0 +1,325 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./WEB-INF/plantillas/publico.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <f:metadata> 
+        <f:viewAction action="#{asistentesBean.findSeminariosEnEjecucion()}"/>
+    </f:metadata> 
+    <ui:define name="contenido">
+        <div>
+            <p:growl autoUpdate="true" life="2500" globalOnly="true"/>
+            <section class="bg-sem4 bg-responsivo">
+                <div class="col-sm-6 col-sm-offset-3 text-center">
+                    <div class="textoInBg" >
+                        <h3 style="color: white">REGISTRO DE ASISTENCIA</h3>
+                        <h:panelGroup rendered="#{not empty(asistentesBean.seminariosEnEjecucionList)}"
+                                      >
+                            <hr/>
+                            <h5  class="text-center" style="color: white">
+                                Seminario: "#{asistentesBean.currentSeminario.tituloPonencia}"
+                            </h5>
+                            <p class="text-center small" style="color: white">
+                                <i class="glyphicon glyphicon-user"/> 
+                                Ponente: #{asistentesBean.currentSeminario.ponente.gradoAcademico.abreviacion} #{asistentesBean.currentSeminario.ponente.nombre} #{asistentesBean.currentSeminario.ponente.apellidoPaterno} #{asistentesBean.currentSeminario.ponente.apellidoMaterno}
+                            </p>
+                            <h:link outcome="consultarSeminario" styleClass="small" title="Más información, resumen del seminario, cv del ponente etc.">
+                                <button type="button" class="btn btn-xs btn-primary">
+                                    ¿De qué se trata el seminario?
+                                </button>
+                                <f:param name="id" value="#{asistentesBean.currentSeminario.idSeminario}" />
+                            </h:link>
+                        </h:panelGroup>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <br/>
+                    <h:panelGroup rendered="#{empty(asistentesBean.seminariosEnEjecucionList)}">
+                        <div class="alert alert-warning">
+                            <i class="fa fa-calendar fa-2x" /> Por el momento, no existen seminarios en ejecución.
+                        </div>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not (empty(asistentesBean.seminariosEnEjecucionList)) and false}"> 
+                        <div class="text-center">
+                            <p:dataTable value="#{asistentesBean.asistentesList}" var="asistente"
+                                         emptyMessage="No se han registrado asistentes a éste seminario" 
+                                         styleClass="ui-datatable-hor-scroll"
+                                         >
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Asistentes registrados: #{asistentesBean.asistentesList.size()}"/>  
+                                </f:facet>  
+                                <p:column>
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Nombre" />  
+                                    </f:facet>  
+                                    #{asistente.apellidoPaterno}  #{asistente.apellidoMaterno}  #{asistente.nombre} 
+                                </p:column>  
+                                <!--
+                                <p:column>
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Email" />  
+                                    </f:facet>  
+                                #{asistente.email}
+                            </p:column> 
+                                -->
+                                <p:column>
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Hora" />  
+                                    </f:facet>  
+                                    <h:outputLabel value="#{asistente.fecha}"  
+                                                   style="text-transform: capitalize"
+                                                   styleClass="text-muted">
+                                        <f:convertDateTime  pattern="hh:mm a"  />
+                                    </h:outputLabel> 
+                                </p:column> 
+
+                            </p:dataTable>
+                        </div>
+                        <hr/>
+                    </h:panelGroup>
+
+                    <seccion>
+                        <div id="instrucciones" class="alert">
+                            <h4>Instrucciones:</h4>
+                            <br/>
+                            <div class="justificado">
+                                <i class="fa fa-fw fa-key fa-2x " ></i>
+                                Durante el seminario se te <strong>proporcionará un código de seguridad</strong> que deberás ingresar al sistema junto con tu email y nombre.
+                            </div>
+                            <br/>
+                            <div class="justificado">
+                                <i class="fa fa-search-plus fa-2x"/><i class="fa fa-fw fa-envelope fa-2x " />
+                                Para facilitar la generación de tú constancia de creditos <strong> ingresa una misma dirección de email para todos tus registros.</strong>
+                            </div>
+                            <br/>
+                            <div class="justificado">
+                                <i class="fa fa-fw fa-clock-o fa-2x " ></i>
+                                El sistema solo genera la constancia  a un seminario <strong>durante el transcurso del mismo </strong>.              
+                            </div>
+                            <br/>
+                            <div class="justificado">
+                                <i class="fa fa-fw fa-bullhorn fa-2x " ></i>
+                                Esta <strong>prohibido difundir el código de seguridad </strong> fuera del evento o generar constancias a personas que no asistan.               
+                            </div>
+                            <br/>
+                            <div class="justificado">
+                                <i class="fa fa-fw fa-arrow-down fa-2x " ></i>
+                                Llena los datos correspondientes y  <strong> verifica que no existan errores </strong>, no habrá cambios después de ser generados. 
+                            </div>
+                            <br/>
+
+                        </div>
+                    </seccion>
+
+
+                    <!--FORMULARIO DE REGISTRO DE ASISTENCIA, SÓLO SI EXISTE ALGÚN SEMINARIO EN EJECUCIÓN-->
+                    <h:panelGroup rendered="#{not empty(asistentesBean.seminariosEnEjecucionList)}"
+                                  id="cuerpoFormulario">                       
+                        <div id="constancia">
+                            <div class="well">
+                                <h3 class="text-center">
+                                    Formulario de Asistencia
+                                </h3>
+                                <hr/>
+                                <h:form class="bs-example form-horizontal">
+                                    <!--
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" >Seminario</label>
+                                        <br/><br/>
+                                        <div class="col-lg-10">
+                                            <p:selectOneButton value="#{asistentesBean.currentSeminario}"
+                                                              converter="SeminarioConverter" 
+                                                              required="false"
+                                                              id="inputGradoAcademico"
+                                                              requiredMessage="El seminario es requerido">
+                                                <f:selectItems value="#{asistentesBean.seminariosEnEjecucionList}" var="var" 
+                                                               itemValue="#{var}" itemLabel="''#{var.tituloPonencia}''"/>
+                                            </p:selectOneButton><br/>
+                                            <p:message for="inputGradoAcademico"/>
+                                        </div>
+                                    </div>
+                                    -->
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" for="inputNombre">Nombre</label>
+                                        <div class="col-lg-10">
+                                            <p:inputText styleClass="form-control" id="inputNombre" 
+                                                         placeholder="Ingresa tu nombre" required="true"
+                                                         requiredMessage="El nombre es requerido"
+                                                         value="#{asistentesBean.currentAsistente.nombre}">
+                                                <!-- <p:ajax event="blur"  update="@([id$=datosConfirmacion])"/>-->
+                                            </p:inputText>
+                                            <p:message for="inputNombre"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" for="inputApellidoPaterno">Apellido Paterno</label>
+                                        <div class="col-lg-10">
+                                            <p:inputText  styleClass="form-control" id="inputApellidoPaterno" 
+                                                          placeholder="Ingresa tu apellido paterno" required="true"                                                          
+                                                          value="#{asistentesBean.currentAsistente.apellidoPaterno}"
+                                                          requiredMessage="El apellido paterno es requerido">
+                                            </p:inputText>
+                                            <p:message for="inputApellidoPaterno"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" for="inputApellidoMaterno">Apellido Materno</label>
+                                        <div class="col-lg-10">
+                                            <p:inputText  styleClass="form-control" id="inputApellidoMaterno"  
+                                                          placeholder="Ingresa tu apellido materno" required="true"
+                                                          value="#{asistentesBean.currentAsistente.apellidoMaterno}"
+                                                          requiredMessage="El apellido materno es requerido">
+                                            </p:inputText>
+                                            <p:message for="inputApellidoMaterno"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" for="inputEmail">Email</label>
+                                        <div class="col-lg-10">
+                                            <p:inputText styleClass="form-control"
+                                                         id="inputEmail"
+                                                         value="#{asistentesBean.currentAsistente.email}"
+                                                         required="true"  requiredMessage="El email es requerido"
+                                                         placeholder="Ingresa el email"
+                                                         validatorMessage="Ingresa un email válido"
+                                                         > 
+                                                <f:validateRegex
+                                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                            </p:inputText>
+                                            <p:message for="inputEmail"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-2 control-label" for="inputCodigoSeguridad">Código de Seguridad</label>
+                                        <div class="col-lg-10">
+                                            <p:inputText styleClass="form-control" id="inputCodigoSeguridad" 
+                                                         value="#{asistentesBean.codigoSeguridad}"
+                                                         required="true"
+                                                         requiredMessage="El código de seguridad es requerido"
+                                                         placeholder="Ingresa el código de seguridad a 6 caracteres"
+                                                         maxlength="6"
+                                                         />
+                                            <p:message for="inputCodigoSeguridad"/>
+                                        </div>
+                                    </div>                                    
+                                    <div class="form-group">
+                                        <div class="col-lg-12 centrado">
+                                            <p:commandLink actionListener="#{asistentesBean.prepararRegistrar()}" 
+                                                           ajax="true"  update="@form,@([id$=datosConfirmacion])">
+                                                <p:ajax update="@([id$=datosConfirmacion])"/>
+                                                <button class="btn btn-primary btn-outline" > Siguiente</button>
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </h:form>                        
+                            </div>
+                        </div>
+                        <!--
+                        <button class="btn btn-warning btn-lg" data-toggle="modal" data-target="#myModal">
+                            Generar
+                        </button>
+                        -->
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title" id="myModalLabel">CONFIRMACIÓN</h4>
+                                    </div>
+                                    <div class="modal-body"> 
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Mi asistencia</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <h:panelGroup id="datosConfirmacion" >
+                                                    <p><strong> Nombre:</strong>
+                                                        <br/>
+                                                        <i>
+                                                            #{asistentesBean.currentAsistente.nombre} 
+                                                            #{asistentesBean.currentAsistente.apellidoPaterno} 
+                                                            #{asistentesBean.currentAsistente.apellidoMaterno}
+                                                        </i>
+                                                    </p>  
+                                                    <p><strong> Email:</strong>
+                                                        <br/>
+                                                        <i>#{asistentesBean.currentAsistente.email} </i>
+                                                    </p> 
+                                                    <p><strong> Seminario:</strong>
+                                                        <i>#{asistentesBean.currentSeminario.tituloPonencia} </i>
+                                                    </p> 
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p>¿Están correctos los datos que ingresaste?</p>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="glyphicon glyphicon-remove"/> No, volver a editar  </button>
+                                        <h:form>
+                                            <p:commandLink
+                                                action="#{asistentesBean.registrarEnTiempo()}"
+                                                ajax="false"
+                                                >
+                                                <button type="button" class="btn btn-primary "><i class="glyphicon glyphicon-ok"/> Si</button>
+                                            </p:commandLink>
+                                            <p:remoteCommand action="#{asistentesBean.exportarConstancia()}"
+                                                             name="exportar" />
+                                        </h:form>                                        
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+
+                        <!-- /.modal -->
+                    </h:panelGroup>
+                </div>
+                <a href="consultarSeminario.xhtml"></a>
+            </div>
+        </div>
+
+
+        <!--
+        <h:form>
+            <p:poll interval="5" 
+                    widgetVar="poll"
+                    async="true"                       
+                    listener="#{asistentesBean.findSeminariosEnEjecucion()}" 
+                    update="@([id$=todo])"   
+                    oncomplete="actualizarCabecera()"
+                    />  
+            <p:remoteCommand name="actualizarCabecera"                              
+                             update="@([id$=cabecera])"/>
+        </h:form>
+        -->
+
+
+        <!-- /.container -->
+        <script>
+            $(document).ready(function() {
+                $("#registrarAsistencia").addClass("active");
+            });
+            function showModal() {
+                $('#myModal').modal('show');
+            }
+            function hideModal() {
+                $('#myModal').modal('hide');
+            }
+            function toggleModal() {
+                $('#myModal').modal('toggle');
+            }
+        </script>
+    </ui:define>
+
+</ui:composition>

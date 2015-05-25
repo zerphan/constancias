@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../WEB-INF/plantillas/administracion.xhtml"
+                xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata>  
+        <f:viewAction action="#{jsfUtil.isLoginIn()}" />
+        <f:viewAction action="#{asistentesBean.findAll()}"/>
+        <f:viewAction action="#{asistentesBean.prepararCreditosAsistentes()}"/>
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <br/>
+        <div class="container">
+            <p:growl autoUpdate="true"  life="1500"/>
+            <!-- Nav tabs -->
+            <br/><br/>
+            <ul class="nav nav-pills" role="tablist">
+                <li class="active"><a href="#asistentes" role="tab" data-toggle="tab"> Consultar Asistentes</a></li>
+                <li><a href="#profile" role="tab" data-toggle="tab">Generar constancia de creditos avanzado</a></li>
+            </ul>
+            <hr/>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="asistentes">
+                    <h2> <i class="fa fa-group colorRosa "/> Consultar Asistentes</h2><br/> 
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div  class="panel panel-default">
+                                <div class="panel-heading ">
+                                    <div class="panel-title "><h5>* CONSTANCIA DE CREDITOS</h5></div>
+                                </div>
+                                <h:form>
+                                    <h:panelGroup id="numeroAsistenciasFiltradas">
+                                        <div class="panel-body">
+                                            Total de asistencias: <strong>#{asistentesBean.listFilteredAsistentes.size()} asistencia(s)</strong>
+                                            <br/>
+                                            Total de horas: <strong>#{asistentesBean.horasAsistencia} horas</strong>
+                                            <br/>
+                                            Total de creditos:  <strong>#{asistentesBean.creditos} creditos</strong>
+                                            <br/>
+                                            <span class="text-warning label-warning text-justify small"> *Filtra la lista de asistencias hasta conseguir solo las asistencias de la persona deseada. </span>
+                                            <br/>
+                                            <br/>
+                                            <button class="btn btn-info">
+                                                <i class="fa fa-download"/> Generar constancia
+                                            </button>
+
+                                        </div>
+                                    </h:panelGroup>
+
+                                </h:form>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <h4>Instrucciones: </h4> 
+                            <p class="text-justify">
+                                En la tabla siguiente se muestra el registro de todas las asistencias, si deseas consultar las asistencias de alguna persona,
+                                podrás buscar al asistente por cualquier atributo.<br/>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- En esta tabla de primefaces se muestra la lista de los asistentes registrados -->
+                    <!-- Se puede hacer un filtro por cada atributo del asistente -->
+                    <h:form styleClass="">
+                        <p:remoteCommand name="remoteFilteredEvent" actionListener="#{asistentesBean.filterListener(filterEvent)}"
+                                         update="@([id$=numeroAsistenciasFiltradas])"/>               
+                        <p:dataTable value="#{asistentesBean.asistentesList}"
+                                     tableStyle="font-size: 13px;"
+                                     id="tablaAsistentes"
+                                     var="var" emptyMessage="No se han registrado asistentes en el sistema" 
+                                     styleClass="ui-datatable-hor-scroll"
+                                     paginatorAlwaysVisible="true"                             
+                                     paginatorPosition="bottom"
+                                     paginator="true"
+                                     rows="30"
+                                     tableStyleClass="text-center"
+                                     filteredValue="#{asistentesBean.listFilteredAsistentes}">
+                            <p:ajax event="filter" oncomplete="remoteFilteredEvent()"  /> <!-- Se llama al completar el filtro porque necesitamos que se actualizarse la lista filtrada, en otro caso se llamaria desde el metodo listener directamente al metodo en lugar de un comando remoto. -->
+                            <f:facet name="header">  
+                                <p:outputLabel value="Lista de Asistentes"/>  
+                            </f:facet>  
+                            <p:column style="padding-bottom: 10px;padding-top: 10px;">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Id" />  
+                                </f:facet>  
+                                #{var.idAsistente}
+                            </p:column> 
+                            <p:column filterBy="#{var.nombre}"
+                                      style="padding-bottom: 10px;padding-top: 10px;">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Nombre" />  
+                                </f:facet>  
+                                #{var.nombre}
+                            </p:column> 
+                            <p:column filterBy="#{var.apellidoPaterno}"
+                                      style="padding-bottom: 10px;padding-top: 10px;">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Paterno" />  
+                                </f:facet>  
+                                #{var.apellidoPaterno}
+                            </p:column> 
+                            <p:column filterBy="#{var.apellidoMaterno}"
+                                      style="padding-bottom: 10px;padding-top: 10px;">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Materno" />  
+                                </f:facet>  
+                                #{var.apellidoMaterno}
+                            </p:column> 
+                            <p:column filterBy="#{var.email}"
+                                      style="padding-bottom: 10px;padding-top: 10px;">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Email" />  
+                                </f:facet>  
+                                #{var.email}
+                            </p:column> 
+                            <p:column filterBy="#{var.seminario.tituloPonencia}"
+                                      style="padding-bottom: 10px;padding-top: 10px; min-width: 300px; max-width: 300px">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Seminario" />  
+                                </f:facet>  
+                                #{var.seminario.tituloPonencia}
+                            </p:column> 
+                            <p:column filterBy="#{var.seminario.fechaInicio.dayOfMonth}"
+                                      style="width: 40px">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Día" />  
+                                </f:facet>  
+                                #{var.seminario.fechaInicio.dayOfMonth().get()}                        
+                            </p:column>
+                            <p:column  filterBy="#{var.seminario.fechaInicio.monthOfYear().getAsText()}"
+                                       style="text-transform: capitalize">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Mes" />  
+                                </f:facet>  
+                                #{var.seminario.fechaInicio.monthOfYear().getAsText()}
+                            </p:column>
+                            <p:column  filterBy="#{var.seminario.fechaInicio.year}">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Año" />  
+                                </f:facet>  
+                                #{var.seminario.fechaInicio.year().get()}<br/>                       
+
+                            </p:column> 
+                        </p:dataTable>
+
+                        <!--
+                        <p:commandLink update="@([id$=numeroAsistenciasFiltradas])">             
+                                <input type="button" class="btn btn-primary" value="Presioname antes de pasar al segundo paso"/>              
+                        </p:commandLink>
+                        -->
+                    </h:form>
+
+
+                </div>
+                <div class="tab-pane" id="profile">
+                    En éste apartado se crea una asistencia a cualquier seminario
+
+                </div>
+            </div>
+
+
+
+
+        </div>
+        <script>
+            $(document).ready(function() {
+                //$("#gestionarSeminariosConcluidos").addClass("active");
+            });
+        </script>
+
+
+    </ui:define>
+
+</ui:composition>

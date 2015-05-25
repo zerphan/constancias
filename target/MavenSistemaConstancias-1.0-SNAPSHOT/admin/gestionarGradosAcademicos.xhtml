@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../WEB-INF/plantillas/administracion.xhtml"
+                xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata>  
+        <f:viewAction action="#{jsfUtil.isLoginInWithRoleAdvance()}" />
+        <f:viewAction action="#{gradosAcademicosBean.findAll()}"/>
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div class="container">
+            <p:growl autoUpdate="true"  life="1500"/>
+            <h1>Grados Academicos</h1>           
+            <hr/>
+
+            <p class="justificado">
+                <strong>Instrucciones:</strong> En ésta sección se muestra una tabla con la definición de grados academicos utilizados como prefijo en los nombres
+                de los expositores y los acreditantes de los seminarios.
+                Puedes editar cualquier dato de estos o eliminarlos seleccionando la acción correspondiente. Si deseas registrar un nuevo grado academico pulsa en el botón
+                registrar grado academico.
+            </p><br/>
+            <div class="text-right">
+                <a href="registrarGradoAcademico.xhtml" class="btn btn-primary"><i class="fa fa-plus" /> Registrar Grado Academico</a>
+            </div>
+            <br/>
+
+            <h:form>
+                <p:dataTable value="#{gradosAcademicosBean.gradosAcademicosList}"
+                             tableStyle="font-size: 13px"
+                             id="tabla"
+                             var="var" emptyMessage="No se han registrado grados academicos en el sistema" 
+                             styleClass="ui-datatable-hor-scroll"
+                             >
+                    <f:facet name="header">  
+                        <p:outputLabel value="Grados Academicos"/>  
+                    </f:facet>  
+                    <p:column>
+                        <f:facet name="header">  
+                            <p:outputLabel value="Id" />  
+                        </f:facet>  
+                        <p:outputLabel value="#{var.id}"
+                                       style="padding: 5px; font-weight: normal"/>
+                    </p:column> 
+                    <p:column>
+                        <f:facet name="header">  
+                            <p:outputLabel value="Nombre" />  
+                        </f:facet>  
+                        <p:outputLabel value="#{var.nombre}"
+                                       style="padding: 5px; font-weight: normal"/>
+                    </p:column> 
+                    <p:column>
+                        <f:facet name="header">  
+                            <p:outputLabel value="Abreviación" />  
+                        </f:facet>  
+                        <p:outputLabel value="#{var.abreviacion}"
+                                       style="padding: 5px; font-weight: normal"/>
+                    </p:column> 
+
+                    <p:column>
+                        <f:facet name="header">  
+                            <p:outputLabel value="Acción" />  
+                        </f:facet>
+                        <h:link outcome="editarGradoAcademico" >
+                            <span class="glyphicon glyphicon-pencil"  title="Editar"/>
+                            <f:param name="id" value="#{var.id}" />
+                            <f:param name="paginaRetorno" value="gestionarGradosAcademicos.xhtml" />
+                        </h:link>
+                        <p:spacer/>
+                        <p:commandLink   update="@([id$=formModalEliminar])"
+                                         ajax="true"                           
+                                         title="Eliminar"
+                                         style="text-decoration: none;" 
+                                         oncomplete="showModalEliminar()"
+                                         >
+                            <f:setPropertyActionListener value="#{var}"                                                         
+                                                         target="#{gradosAcademicosBean.currentGradoAcademico}"/>
+                            <span class="glyphicon glyphicon-trash"/>
+                            <!--
+                            <p:confirm header="Confirmación" message="¿Está seguro que lo desea eliminar?" 
+                                       icon="ui-icon-alert"/>
+                            -->
+
+                        </p:commandLink>
+                    </p:column> 
+                </p:dataTable>
+            </h:form>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="modalEliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <h:form id="formModalEliminar">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"> CONFIRMACIÓN</h4>
+                        </div>
+                        <div class="modal-body">                                       
+                            <div class="">
+                                Se removera el siguiente grado academico:<br/>
+                                <strong><i>#{gradosAcademicosBean.currentGradoAcademico.nombre}</i></strong>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <br/>
+                            ¿Esta seguro que desea eliminarlo?
+                            <br/><br/>
+                            <p:commandLink  
+                                update="@([id$=tabla])"
+                                action="#{gradosAcademicosBean.eliminar()}"
+                                ajax="true" 
+                                style=" text-decoration: none;" >
+                                <button type="button" class="btn btn-danger" data-dismiss="modal"> 
+                                    <span class="glyphicon glyphicon-trash"/> Sí,eliminar</button>
+                            </p:commandLink>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/> No, regresar</button>
+
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </h:form>
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!-- /.modal -->
+
+        <script>
+            $(document).ready(function() {
+                //$("#gestionarSeminariosConcluidos").addClass("active");
+
+            });
+
+            function showModalEliminar() {
+                $('#modalEliminar').modal('show');
+            }
+        </script>
+
+
+
+
+    </ui:define>
+
+</ui:composition>

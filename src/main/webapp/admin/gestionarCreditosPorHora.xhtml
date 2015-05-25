@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../WEB-INF/plantillas/administracion.xhtml"
+                xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata>  
+        <f:viewAction action="#{jsfUtil.isLoginInWithRoleAdvance()}" />
+        <f:viewAction action="#{constanteCreditosPorHoraBean.findCreditosPorHora()}"/>
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div class="container">
+            <p:growl autoUpdate="true"  life="1500"/>
+            <h1>Creditos por Hora</h1>           
+            <hr/>
+            <p class="justificado">
+                <strong>Instrucciones:</strong> En ésta sección puedes indicar cuantos creditos equivale una hora presencial
+                de seminario de investigación. Éste dato es necesario para calcular los 
+                <h:link outcome="creditosAsistentes" >
+                    creditos totales de cada asistente
+                </h:link>
+            </p><br/>
+            <br/>
+            <h:form styleClass="bs-example form-horizontal">
+                <ezcomp:formularioCreditosPorHora constante="#{constanteCreditosPorHoraBean.creditosPorHora}"/>
+                <br/>
+                <div class="form-group">                    
+                    <div class="col-md-12">
+                        <p:commandLink 
+                            action="#{constanteCreditosPorHoraBean.editar()}"                                 
+                            ajax="true"                            
+                            update="@form">
+                            <button type="button" class="btn btn-primary ">
+                                <i class="glyphicon glyphicon-ok"/> Guardar Cambios</button>
+                        </p:commandLink>                       
+                    </div>
+
+                </div>
+            </h:form>
+        </div>
+        <script>
+            $(document).ready(function() {
+                //$("#gestionarSeminariosConcluidos").addClass("active");
+            });
+        </script>
+
+
+    </ui:define>
+
+</ui:composition>

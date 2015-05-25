@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="publicidadSeminario" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="841eeff8-4bf3-4e0c-8b6f-59f4366eff53">
+	<property name="ireport.zoom" value="1.652892561983471"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="784"/>
+	<property name="ireport.callouts" value="##Fri Mar 07 13:38:26 CST 2014"/>
+	<parameter name="idSeminarioParametro" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="imagenCodigoQR" class="java.lang.Object"/>
+	<queryString>
+		<![CDATA[select s.idSeminario, s.resumen, s.tituloPonencia, s.fechaInicio,g.abreviacion, s.direccion,p.nombre,p.apellidoPaterno,p.apellidoMaterno, p.cv  from seminario s, ponente p ,gradoAcademico g where p.idPonente like s.Ponente and g.id like p.GradoAcademico and s.idSeminario = $P{idSeminarioParametro};]]>
+	</queryString>
+	<field name="idSeminario" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="resumen" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tituloPonencia" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fechaInicio" class="java.util.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="abreviacion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="apellidoPaterno" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="apellidoMaterno" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cv" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band height="752"/>
+	</background>
+	<title>
+		<band height="135" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="11" width="572" height="26" uuid="a9f1cb93-1afb-4a38-b677-11470e226eb7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[INSTITUTO POLITÉCNICO NACIONAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="37" width="572" height="22" uuid="5c0c9c0e-2de6-4b2c-87a7-5fab16ffb0f6"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[ESCUELA SUPERIOR DE CÓMPUTO]]></text>
+			</staticText>
+			<image scaleImage="RealHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="453" y="25" width="86" height="53" uuid="e550243c-9bfb-4e70-ae06-f9291d3b2ddb"/>
+				<imageExpression><![CDATA["escomlogo.png"]]></imageExpression>
+			</image>
+			<image scaleImage="RealHeight">
+				<reportElement stretchType="RelativeToTallestObject" x="18" y="4" width="109" height="100" uuid="be3547c3-f2b6-4a15-b9bc-6ba86d2fea98"/>
+				<imageExpression><![CDATA["IPN4.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="69" width="572" height="32" uuid="baecaec4-7a9e-40d2-a457-db27fb81240f"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Sección de Estudios de Posgrado e Investigación
+Departamento de Investigación
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="100" width="504" height="32" uuid="50c366f8-31a8-4884-80ae-8e061339a570"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[INVITA AL SEMINARIO DE INVESTIGACIÓN]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="507" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="18" y="33" width="540" height="88" uuid="a86f4d94-5a40-4fd9-8b15-ae53da67c5cf"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="18" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tituloPonencia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="572" height="33" forecolor="#000000" uuid="34eee27c-6f40-4ba8-a598-a91e987aab41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ponencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="121" width="504" height="24" uuid="d42958da-59ea-4009-9c94-9834cb2f1e08"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ponente]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="36" y="145" width="504" height="34" uuid="38e74795-0d4a-4160-ad95-e9e56c0b6c3f"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{abreviacion} +""+$F{nombre}+" "+ $F{apellidoPaterno}+" "+ $F{apellidoMaterno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="36" y="202" width="504" height="87" uuid="8f89bec9-d5c0-4043-97f0-afe0a337cabd"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cv}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="36" y="179" width="504" height="24" uuid="85cd8ab1-6b8d-468a-b1ea-1d1f9de890fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Curriculum del Expositor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="290" width="504" height="24" uuid="dd265f21-0665-44d4-8642-892101ce9f51"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Resumen]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="36" y="313" width="504" height="85" uuid="27212d6e-bbc2-4e2d-b669-2592eb4625bf"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{resumen}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="186" y="401" width="217" height="14" uuid="4af64922-7aae-435a-9a9a-a27c5e414eac"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd/MMMMM/yyyy h:mm a">
+				<reportElement x="174" y="417" width="241" height="20" uuid="bde52883-c0ae-4025-9fbf-7edb1467a388"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaInicio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="187" y="442" width="216" height="14" uuid="241b3dce-eb3a-4337-af51-b890417fd822"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Lugar]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="175" y="457" width="240" height="38" uuid="9a470f8a-2ff7-4429-9e30-699d75fa4411"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="12" isBold="false" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="441" y="401" width="100" height="100" uuid="063bc33f-175f-45a7-918b-cbddf1dbcb62"/>
+				<imageExpression><![CDATA[$P{imagenCodigoQR}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="42">
+			<staticText>
+				<reportElement x="403" y="0" width="169" height="42" forecolor="#666666" uuid="9feb33d8-87e7-45f1-8b01-28ebc1bff61c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="false" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[*Alumnos PIFI se les otorgará constancia de asistencia.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="36" y="10" width="105" height="24" uuid="9c2d3cb4-a2ec-4ed5-a291-e78be97295b4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[ENTRADA LIBRE]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="572" height="40" forecolor="#666666" uuid="e6a210f0-5793-4c08-bfc1-62f203b945e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Escuela Superior de Cómputo. Av. Juan de Dios Bátiz s/n, Esq. M. Othón de Mendizábal, Unidad Profesional Adolfo López Mateos, C.P. 07738, México D.F.]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="constanciaCreditos" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3307b74d-4983-4dcd-b26c-1c0b2bbd0a81">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="298"/>
+	<parameter name="NOMBRE_ASISTENTE" class="java.lang.String"/>
+	<parameter name="HORAS" class="java.lang.String"/>
+	<parameter name="CREDITOS" class="java.lang.String"/>
+	<parameter name="FECHA_ACTUAL" class="java.util.Date"/>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image>
+				<reportElement x="87" y="359" width="378" height="374" uuid="b4ab9429-85a9-435c-a1ec-46133e5fae76"/>
+				<imageExpression><![CDATA["\\logoRepublicaMarcaAgua.png"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="135" splitType="Stretch">
+			<staticText>
+				<reportElement x="344" y="66" width="164" height="15" forecolor="#666666" uuid="8d4142dd-cc3e-4437-baa1-67c5ca9e5a13"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="7" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Escuela Superior de Cómputo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="81" width="165" height="20" forecolor="#666666" uuid="493d50ec-6fe8-4887-a8b4-6408f45ae13e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Sección de Estudios de Posgrado e Investigación y Departamento de Investigación.]]></text>
+			</staticText>
+			<image scaleImage="RetainShape">
+				<reportElement stretchType="RelativeToTallestObject" x="517" y="73" width="36" height="29" uuid="3db0fad5-d1db-41ec-a9f6-845b643e1300"/>
+				<imageExpression><![CDATA["escomlogo.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="10" y="10" width="540" height="56" uuid="babd598e-e452-48da-952c-9f35de0ff4e1"/>
+				<imageExpression><![CDATA["\\bannerPoli.png"]]></imageExpression>
+			</image>
+			<textField pattern="&apos;México, D.F.,&apos; EEEEE d &apos;de&apos; MMMMM &apos;del&apos; yyyy">
+				<reportElement x="316" y="112" width="228" height="13" uuid="80e24d48-03ec-40c3-af55-53e17c18dab0"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans Mono" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHA_ACTUAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="422" splitType="Stretch">
+			<staticText>
+				<reportElement x="29" y="120" width="515" height="20" uuid="a1208653-5cc1-43f4-9f11-7f0d71849dad"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Por medio de la presente se hace constar que el alumno:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="29" y="146" width="515" height="36" uuid="f398094c-beaf-4d82-ba13-d50ee69c7dbd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOMBRE_ASISTENTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="29" y="194" width="515" height="49" uuid="5b7d9b47-c5e2-45ff-a462-f4fda6164015"/>
+				<textElement textAlignment="Center">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cumplió con " +$P{HORAS} +" horas como asistente a los Seminarios de Investigación que se imparten en esta unidad académica, para los alumnos del Programa Institucional de Formación de Investigadores (PIFI), con lo cual se avala "+$P{CREDITOS}+" créditos de la Unidad de Aprendizaje Electiva."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="29" y="46" width="515" height="45" uuid="e245e14a-e6c3-4349-a7fe-3ab3940b4deb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONSTANCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="263" width="515" height="20" uuid="dda725dc-05e7-491c-ab89-e329906432fc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ATENTAMENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="29" y="283" width="515" height="20" uuid="9f812d65-63bc-4394-a5ea-032b0eee436b"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA["LA TÉCNICA AL SERVICIO DE LA PATRIA"]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="29" y="0" width="515" height="32" forecolor="#999999" uuid="0d3f72f5-07e3-4544-892e-80f4cae9e12c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Escuela Superior de Cómputo. Av. Juan de Dios Bátiz s/n, Esq. M. Othón de Mendizábal, Unidad Profesional Adolfo López Mateos, C.P. 07738, México D.F.]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch"/>
+	</summary>
+</jasperReport>

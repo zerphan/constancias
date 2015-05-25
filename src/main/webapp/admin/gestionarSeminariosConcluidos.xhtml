@@ -1,0 +1,517 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../WEB-INF/plantillas/administracion.xhtml">
+    <f:metadata>
+        <f:viewAction action="#{jsfUtil.isLoginIn()}" />
+        <f:viewAction action="#{seminariosBean.findSeminariosConcluidos()}" /> 
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div>            
+            <section class="bg-escompasto bg-responsivo">
+                <div class="col-sm-6 col-sm-offset-3 text-center">
+                    <div class="textoInBg" >
+                        <h2 style="color: white"> SEMINARIOS CONCLUIDOS</h2>
+                        <hr/>
+                        <p class="justificado label label-info"> ADMINISTRACIÓN</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <p:growl autoUpdate="true" life="1500"/>
+            <h1>Seminarios Concluidos</h1>           
+            <hr/>  
+            <p class="justificado " >
+                <strong class="">Instrucciones:</strong> En ésta sección se muestra una tabla con los seminarios que han sido concluidos, puedes realizar las siguientes acciones al seleccionar un seminario concluido:<br/>
+                <ul>
+                    <li><i class="fa fa-check colorVerde"/> Descargar Lista de Asistencia</li>
+                    <li><i class="fa fa-check colorVerde"/> Descargar Constancia del Ponente</li>                    
+                    <li>
+                        <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq true}">
+                            <i class="fa fa-check colorVerde"/> 
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq false}">
+                            <i class="fa fa-lock colorAmarillo"/> 
+                        </h:panelGroup>
+                        Agregar Asistente
+                    </li>
+                    <li>
+                        <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq true}">
+                            <i class="fa fa-check colorVerde"/> 
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq false}">
+                            <i class="fa fa-lock colorAmarillo"/> 
+                        </h:panelGroup>
+                        Eliminar
+                    </li>  
+
+                </ul>
+            </p><br/>
+            <h:form >
+                <p:dataTable value="#{seminariosBean.listSeminarios}"
+                             tableStyle="font-size: 12px; "
+                             id="tablaSeminariosConcluidos"
+                             var="var" emptyMessage="No se han registrado seminarios en el sistema" 
+                             styleClass="ui-datatable-hor-scroll"
+                             rows="15"
+                             liveResize="true"
+                             liveScroll="true"
+                             paginatorAlwaysVisible="true"                             
+                             paginatorPosition="bottom"
+                             paginator="true"
+                             tableStyleClass="text-center"  
+                             filteredValue="#{seminariosBean.listFilteredSeminarios}"
+                             selection="#{seminariosBean.currentSeminario}"
+                             selectionMode="single"
+                             rowKey="#{var.idSeminario}"
+                             >
+                    <p:ajax event="rowSelect"  update="@([id$=formModalAcciones])" oncomplete="showModalAcciones()" />  
+                    <f:facet name="header">  
+                        <p:outputLabel value="Seminarios concluidos"/>
+                    </f:facet>
+                    <p:column style="padding-top:20px;padding-bottom:20px">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Id" />  
+                        </f:facet>  
+                        #{var.idSeminario}
+                    </p:column> 
+
+                    <p:column  filterBy="#{var.tituloPonencia}"
+                               id="tableTitulo"
+                               style="min-width: 300px;text-transform: capitalize">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Titulo Ponencia" />  
+                        </f:facet>  
+                        #{var.tituloPonencia}
+                    </p:column>
+                    <p:column filterBy="#{var.ponente.nombre}"
+                              style="text-transform: capitalize">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Nombre Ponente" />  
+                        </f:facet>                                                  
+                        #{var.ponente.nombre}                  
+                    </p:column>
+                    <p:column filterBy="#{var.ponente.apellidoPaterno}"
+                              style="text-transform: capitalize">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Apellido Paterno Ponente" />  
+                        </f:facet>  
+                        #{var.ponente.apellidoPaterno}
+                    </p:column>
+                    <p:column  filterBy="#{var.ponente.apellidoMaterno}"
+                               style="text-transform: capitalize">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Apellido Materno Ponente" />  
+                        </f:facet>  
+                        #{var.ponente.apellidoMaterno}
+                    </p:column>
+                    <!--
+                    <p:column style="min-width: 150px" filterBy="#{var.ponente.nombre} #{var.ponente.apellidoPaterno}">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Ponente" />  
+                        </f:facet>  
+                        <p:outputLabel value="#{var.ponente.nombre} #{var.ponente.apellidoPaterno} #{var.ponente.apellidoMaterno}"
+                                       style="padding: 10px"/>
+                    </p:column> -->
+                    <p:column >
+                        <f:facet name="header">  
+                            <p:outputLabel value="Número de Asistentes" />  
+                        </f:facet>  
+                        #{var.asistenteList.size()} 
+                    </p:column>                  
+
+                    <p:column filterBy="#{var.fechaInicio.dayOfMonth}"
+                              style="width: 60px">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Día" />  
+                        </f:facet>  
+                        #{var.fechaInicio.dayOfMonth().get()}
+                        <!--
+                        <p:outputLabel value="#{var.fechaInicio.toDate()}" >
+                            <f:convertDateTime  pattern="dd" />
+                        </p:outputLabel>
+                        -->
+                    </p:column>
+                    <p:column  filterBy="#{var.fechaInicio.monthOfYear().getAsText()}"
+                               style="text-transform: capitalize">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Mes" />  
+                        </f:facet>  
+                        #{var.fechaInicio.monthOfYear().getAsText()}
+                        <!--
+                        <p:outputLabel value="#{var.fechaInicio.toDate()}" style="padding: 5px">
+                            <f:convertDateTime  pattern="MMMMM" />
+                        </p:outputLabel>
+                        -->
+                    </p:column>
+                    <p:column  filterBy="#{var.fechaInicio.year}">
+                        <f:facet name="header">  
+                            <p:outputLabel value="Año" />  
+                        </f:facet>  
+                        #{var.fechaInicio.year().get()}<br/>                        
+
+                    </p:column> 
+
+                </p:dataTable>
+            </h:form>
+        </div>
+
+        <!-- MODAL CONFIRMACION ELIMINAR SEMINARIO -->
+        <div class="modal fade" id="modalConfirmarEliminarSeminario" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <h:form id="formEliminarSeminario">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"><i class="glyphicon glyphicon-trash"/> CONFIRMACIÓN</h4>
+                        </div>
+                        <div class="modal-body">                                       
+
+                            <p><strong> Seminario:</strong>
+                                <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
+                            </p>
+                            <h:panelGroup id="datosConfirmacion" >
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Terminos y condiciones</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        Se eliminará de forma permantente el seminario con ID: #{seminariosBean.currentSeminario.idSeminario} 
+                                        el cuál ha sido concluido satisfactoriamente, se eliminará la información del ponente y los asistentes a éste seminario.
+                                    </div>                                    
+                                </div>
+                                <div class="alert alert-danger">
+                                    <p:selectBooleanCheckbox 
+                                        value="#{seminariosBean.lecturaTerminos}"> 
+                                        <p:ajax update="@([id$=botonEliminar])"/>
+                                    </p:selectBooleanCheckbox> 
+                                    He leido y estoy de acuerdo con los terminos y condiciones
+                                </div>
+                            </h:panelGroup>
+                        </div>
+                        <div class="modal-footer">
+                            <p>
+                                ¿Está seguro que desea eliminar éste seminario?
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                <i class="glyphicon glyphicon-remove"/> No, regresar</button>
+                            <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq true}">
+                                <p:commandLink 
+                                    id="botonEliminar"
+                                    disabled="#{not seminariosBean.lecturaTerminos}"
+                                    actionListener="#{seminariosBean.eliminarCurrentSeminarioConcluido()}"                                 
+                                    update="@([id$=tablaSeminariosConcluidos])"
+                                    ajax="true"
+                                    >               
+                                    <button type="button" class="btn btn-primary ">
+                                        <i class="glyphicon glyphicon-ok"/> Si, eliminar</button>
+                                </p:commandLink> 
+                            </h:panelGroup>                           
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </h:form>
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!-- END MODAL CONFIRMACION ELIMINAR SEMINARIO -->
+
+
+        <!-- MODAL SELECCIONAR ACCION -->
+        <div class="modal fade" id="modalAcciones" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <h:form id="formModalAcciones">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"><i class="fa fa-wrench"/> ¿Qué acción desea realizar?</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- DETALLES DEL SEMINARIO EN PANEL-->
+                            <div class="panel panel-default">                              
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Detalles del seminario</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p><strong> Titulo:</strong>
+                                        <br/>
+                                        <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
+                                    </p>  
+                                    <p><strong> Ponente:</strong>
+                                        <br/>
+                                        <i>#{seminariosBean.currentSeminario.ponente.nombreCompleto} </i>
+                                    </p> 
+                                    <p><strong> Total Asistentes:</strong>
+                                        <i>#{seminariosBean.currentSeminario.asistenteList.size()} </i>
+                                    </p> 
+                                </div>                                
+                            </div>
+
+                            <!-- LISTA DE ACCIONES-->
+                            <!-- DESCARGA DE LISTA DE ASISTENTES-->
+                            <p:commandLink 
+                                action="#{documentosBean.eventoExportDocumentoProbatorio(actionEvent)}" 
+                                ajax="false"
+                                >    
+                                <f:setPropertyActionListener value="#{seminariosBean.currentSeminario}"                                                         
+                                                             target="#{documentosBean.seminario}"/> 
+                                <button type="button" class="btn fondoVerde btn-block" style="color:white" data-dismiss="modal">
+                                    <i class="fa fa-download"/> Descargar Lista de Asistentes</button>
+                            </p:commandLink>
+                            <!-- DESCARGA DE CONSTANCIA DE PONENTE-->
+                            <br/>
+                            <p:commandLink  oncomplete="hideModalAcciones"
+                                            action="#{seminariosBean.exportarConstanciaPonente()}"
+                                            ajax="false" 
+                                            style=" text-decoration: none;" >
+                                <button type="button" class="btn btn-info btn-block" data-dismiss="modal"> 
+                                    <i class="fa fa-download"/> Descargar Constancia Ponente</button>
+                            </p:commandLink>
+                            <!-- ACCIONES SOLO PARA ADMINISTRADORES AVANZADOS: ELIMINAR SEMINARIO Y AGREGAR ASISTENTE-->
+                            <h:panelGroup rendered="#{administradorBean.administrador.administracionAvanzada eq true}">
+
+                                <!-- AGREGAR ASISTENTE-->
+                                <br/>
+                                <p:commandLink  oncomplete="hideModalAcciones"
+                                                onsuccess="showModalAgregarAsistente()"
+                                                action="#{seminariosBean.prepararAgregarAsistenteExtraTemporal()}"
+                                                style=" text-decoration: none;"   
+                                                ajax="true"
+                                                update="@([id$=formAgregarAsistente])"
+                                                >
+                                    <button type="button" class="btn btn-info btn-block" data-dismiss="modal"> 
+                                        <i class="glyphicon glyphicon-plus"/><i class="glyphicon glyphicon-user"/> Agregar asistente</button>
+                                </p:commandLink>
+
+                                <!-- ELIMINAR SEMINARIO-->
+                                <br/>
+                                <p:commandLink  oncomplete="hideModalAcciones"
+                                                onsuccess="showModalConfirmarEliminarSeminario()"
+                                                update="@([id$=formEliminarSeminario])"
+                                                action="#{seminariosBean.prepararEliminarSeminario}"
+                                                ajax="true" 
+                                                style=" text-decoration: none;" >
+                                    <button type="button" class="btn btn-danger btn-block" data-dismiss="modal"> 
+                                        <span class="glyphicon glyphicon-trash"/> Eliminar</button>
+                                </p:commandLink>    
+
+                            </h:panelGroup>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/>Cancelar</button>
+
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </h:form>
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!--  END MODAL SELECCIONAR ACCION -->
+
+        <!-- MODAL AGREGAR ASISTENTE-->
+        <div class="modal fade" id="modalAgregarAsistente" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+
+                <h:form id="formAgregarAsistente">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                <i class="glyphicon glyphicon-plus"/>
+                                <i class="glyphicon glyphicon-user"/>
+                                Agregar asistente
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong> Seminario:</strong>
+                                <br/>
+                                <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
+                            </p>  
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Datos del Asistente</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p>
+                                        <strong>Instrucciones:</strong> Ingrese los datos correspondientes del asistente.                                
+                                    </p>
+                                    <div class="form-horizontal bs-example">
+                                        <div class="form-group">
+                                            <label class="col-lg-2 control-label" for="inputNombre">Nombre</label>
+                                            <div class="col-lg-10">
+                                                <p:inputText styleClass="form-control" id="inputNombre" 
+                                                             placeholder="Ingresa el nombre" required="true"
+                                                             requiredMessage="El nombre es requerido"
+                                                             value="#{asistentesBean.currentAsistente.nombre}">
+                                                    <!-- <p:ajax event="blur"  update="@([id$=datosConfirmacion])"/>-->
+                                                </p:inputText>
+                                                <p:message for="inputNombre"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-2 control-label" for="inputApellidoPaterno">Apellido Paterno</label>
+                                            <div class="col-lg-10">
+                                                <p:inputText  styleClass="form-control" id="inputApellidoPaterno" 
+                                                              placeholder="Ingresa el apellido paterno" required="true"                                                          
+                                                              value="#{asistentesBean.currentAsistente.apellidoPaterno}"
+                                                              requiredMessage="El apellido paterno es requerido">
+                                                </p:inputText>
+                                                <p:message for="inputApellidoPaterno"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-2 control-label" for="inputApellidoMaterno">Apellido Materno</label>
+                                            <div class="col-lg-10">
+                                                <p:inputText  styleClass="form-control" id="inputApellidoMaterno"  
+                                                              placeholder="Ingresa el apellido materno" required="true"
+                                                              value="#{asistentesBean.currentAsistente.apellidoMaterno}"
+                                                              requiredMessage="El apellido materno es requerido">
+                                                </p:inputText>
+                                                <p:message for="inputApellidoMaterno"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-lg-2 control-label" for="inputEmail">Email</label>
+                                            <div class="col-lg-10">
+                                                <p:inputText styleClass="form-control"
+                                                             id="inputEmail"
+                                                             value="#{asistentesBean.currentAsistente.email}"
+                                                             required="true"  requiredMessage="El email es requerido"
+                                                             placeholder="Ingresa el email"
+                                                             validatorMessage="Ingresa un email válido"
+                                                             > 
+                                                    <f:validateRegex
+                                                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                </p:inputText>
+                                                <p:message for="inputEmail"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="modal-footer">
+                            <p>¿Están correctos los datos que ingresaste?</p> 
+                            <p:commandLink oncomplete="hideModalAgregarAsistente()"
+                                           onsuccess="showModalAcciones()"
+                                           immediate="true">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/>No, regresar</button>  
+                            </p:commandLink>
+                            <p:commandLink
+                                action="#{seminariosBean.registrarExtratemporal()}"
+                                update="@([id$=tablaSeminariosConcluidos])"
+                                ajax="true"
+                                >
+                                <button type="button" class="btn btn-primary "><i class="glyphicon glyphicon-ok"/> Sí, registrar asistente</button>
+                            </p:commandLink>
+
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </h:form>
+
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <!--  END MODAL AGREGAR ASISTENTE -->
+
+
+
+        <!-- DIALOG ELIMINAR SEMINARIO-->
+        <p:dialog header="Confirmación"
+                  widgetVar="dialogEliminarSeminarioConcluido" 
+                  resizable="false"  
+                  modal="true"
+                  style="max-width: 500px; top: 50%; margin-top: -200px;"
+                  closeOnEscape="true"> 
+            <h:form id="formEliminarSeminario2">
+                <label ><strong> ¿Desea eliminar el seminario?</strong></label><br/>
+                <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
+
+                <br/><br/>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Terminos y condiciones</h3>
+                    </div>
+                    <div class="panel-body">
+                        Se eliminará de forma permantente el seminario con ID: #{seminariosBean.currentSeminario.idSeminario} 
+                        el cuál ha sido concluido anteriormente, se borrará la información del ponente y los asistentes a éste seminario.
+                        <br/>
+                        Acepto: <p:selectBooleanButton value="#{seminariosBean.lecturaTerminos}" onLabel="Si" offLabel="No" > 
+                            <p:ajax update="@([id$=botonEliminar])"/>
+                        </p:selectBooleanButton> 
+                    </div>
+                </div>
+
+                <p:separator/>
+
+                <p:commandButton value="Si" 
+                                 id="botonEliminar"
+                                 disabled="#{not seminariosBean.lecturaTerminos}"
+                                 actionListener="#{seminariosBean.eliminarCurrentSeminarioConcluido()}"                                 
+                                 update="@([id$=tablaSeminariosConcluidos])"
+                                 oncomplete="dialogEliminarSeminarioConcluido.hide()"
+                                 styleClass="ui-confirmdialog-yes" 
+                                 icon="ui-icon-check"
+                                 ajax="true"
+                                 >                         
+                </p:commandButton>  
+                <p:commandButton value="No"  
+                                 oncomplete="dialogEliminarSeminarioConcluido.hide()" 
+                                 styleClass="ui-confirmdialog-no" 
+                                 icon="ui-icon-close"
+                                 /> 
+            </h:form>
+        </p:dialog> 
+
+        <!-- END DIALOG ELIMINAR SEMINARIO-->
+
+        <!-- /.container -->
+        <script>
+            $(document).ready(function() {
+
+            });
+            //Funciones modal confirmacion eliminar seminario
+            function showModalConfirmarEliminarSeminario() {
+                $('#modalConfirmarEliminarSeminario').modal('show');
+            }
+            function hideModalConfirmarEliminarSeminario() {
+                $('#modalConfirmarEliminarSeminario').modal('hide');
+            }
+            function toggleModalConfirmarEliminarSeminario() {
+                $('#modalConfirmarEliminarSeminario').modal('toggle');
+            }
+            //Funciones modal seleccion de acciones
+            function showModalAcciones() {
+                $('#modalAcciones').modal('show');
+            }
+            function hideModalAcciones() {
+                $('#modalAcciones').modal('hide');
+            }
+            //Funciones modal agregar asistente
+            function showModalAgregarAsistente() {
+                $('#modalAgregarAsistente').modal('show');
+            }
+            function hideModalAgregarAsistente() {
+                $('#modalAgregarAsistente').modal('hide');
+            }
+
+        </script>
+
+
+    </ui:define>
+
+</ui:composition>

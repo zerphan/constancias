@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../WEB-INF/plantillas/administracion.xhtml"
+                xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata>  
+        <f:viewAction action="#{jsfUtil.isLoginInWithRoleAdvance()}" />
+        <f:viewAction action="#{definicionCodigoQRBean.find()}"/>
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div class="container">
+            <p:growl autoUpdate="true"  life="1500"/>
+            <h1>Definición código QR</h1>           
+            <hr/>
+            <p class="justificado">
+                <strong>Instrucciones:</strong> En ésta sección se muestran los datos que contendrá el código QR el cuál identificará de manerá
+                única a las constancias de los asistentes y los ponentes.
+            </p><br/>
+            <br/>
+            <h:form styleClass="bs-example form-horizontal">
+                <ezcomp:formularioCodigoQR codigoQR="#{definicionCodigoQRBean.definicionCodigoQR}"/>
+                <br/>
+                <div class="form-group">
+                    Se ha deshabilitado la edición de este atributo.
+                    <!--
+                    <div class="col-md-12">
+                        <p:commandLink 
+                            action="#{definicionCodigoQRBean.editar()}"                                 
+                            ajax="true"                            
+                            update="@form">
+                            <button type="button" class="btn btn-primary ">
+                                <i class="glyphicon glyphicon-ok"/> Guardar Cambios</button>
+                        </p:commandLink>                       
+                    </div>
+                    -->
+                </div>
+            </h:form>
+        </div>
+        <script>
+            $(document).ready(function() {
+                //$("#gestionarSeminariosConcluidos").addClass("active");
+            });
+        </script>
+
+
+    </ui:define>
+
+</ui:composition>

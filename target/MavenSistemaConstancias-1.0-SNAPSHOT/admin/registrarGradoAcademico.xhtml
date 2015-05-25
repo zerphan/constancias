@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pt="http://java.sun.com/jsf/passthrough"
+                 template="./../WEB-INF/plantillas/administracion.xhtml"
+                 xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata> 
+        <f:viewAction action="#{jsfUtil.isLoginIn()}" />
+        <f:viewAction action="#{gradosAcademicosBean.prepararRegistrar()}" /> 
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div class="container">
+            <br/>
+            <ol class="breadcrumb">
+                <li><a href="gestionarGradosAcademicos.xhtml">Gestionar Grados Academicos</a></li>
+                <li class="active"> Registrar acreditador</li>
+            </ol>
+            <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
+            <h1 > <!--<i class="fa fa-fw fa-plus-circle fa-2x " ></i> -->Registrar Grado Academico</h1>
+            <hr/>
+            <p class="justificado">
+                <strong class="">Instrucciones: </strong> Para realizar el registro deberás llenar 
+                los datos correspondientes y posteriormente dar click en el botón registrar.
+            </p><br/>
+            <div class="text-right">
+                <p>
+                    <a type="button" href="gestionarGradosAcademicos.xhtml" class="btn btn-xs btn-default"><i class="fa fa-arrow-circle-left"/>    Regresar</a>
+                </p> 
+            </div>
+            <br/>
+            <h:form  styleClass="bs-example form-horizontal">    
+                <h3 class=""><i class="fa fa-bookmark colorAzul " />
+                    Grado academico
+                </h3>
+                <hr/>
+                <ezcomp:formularioGradoAcademico grado="#{gradosAcademicosBean.currentGradoAcademico}" />
+
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <p:commandLink 
+                            action="#{gradosAcademicosBean.registrar()}"                                  
+                            ajax="true"
+                            update="@form"
+                            >
+                            <button type="button" class="btn  btn-primary"><i class="glyphicon glyphicon-ok"/> Registrar</button>
+                        </p:commandLink>
+                        <a type="button" href="gestionarGradosAcademicos.xhtml" class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove"/> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <!-- /.container -->
+        <script>
+            $(document).ready(function() {
+                // $("#registrarSeminario").addClass("active");
+            });
+        </script>
+    </ui:define>
+
+</ui:composition>

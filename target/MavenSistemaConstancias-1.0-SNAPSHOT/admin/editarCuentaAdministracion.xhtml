@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://java.sun.com/jsf/passthrough"
+                template="./../WEB-INF/plantillas/administracion.xhtml"
+                xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata> 
+        <f:viewAction action="#{jsfUtil.isLoginInWithRoleAdvance()}" />
+        <f:viewParam name="paginaRetorno" value="#{cuentasAdministracionBean.paginaRetornoGet}"/>
+        <f:viewParam name="id" value="#{cuentasAdministracionBean.idGet}"/>  
+        <f:viewAction action="#{cuentasAdministracionBean.prepararEditar()}" /> 
+    </f:metadata> 
+    <ui:define name="contenido">
+        <div class="container">           
+            <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
+            <br/>
+            <h1> Editar cuenta</h1>
+            <hr/>
+            <div class="text-right">  
+                <p>
+                    <a type="button" href="gestionarCuentasAdministracion.xhtml" class="btn btn-xs btn-default"><i class="fa fa-arrow-circle-left"/>    Regresar</a>
+                </p> 
+            </div>
+            <br/>
+            <div>
+                <strong class="">Instrucciones: </strong> Edita los campos deseados y pulsa en  el botón guardar cambios para persistir los cambios realizados 
+            </div>
+            <br/>
+            <h:form  styleClass="bs-example form-horizontal" > 
+                <h3 class="">
+                    <i class="glyphicon glyphicon-user colorRojo"/><i class="fa fa-key colorAmarillo"/>  Cuenta de Administración
+                </h3>
+                <hr/>
+                <ezcomp:formularioCuentaAdministrador persona="#{cuentasAdministracionBean.currentAdminstrador}" />
+                <br/>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <p:commandLink 
+                            action="#{cuentasAdministracionBean.editar()}"                                 
+                            ajax="true"
+                            update="@form">
+                            <button type="button" class="btn btn-primary ">
+                                <i class="glyphicon glyphicon-ok"/> Guardar Cambios</button>
+                        </p:commandLink>
+                        <a type="button" href="#{cuentasAdministracionBean.paginaRetornoGet}" class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove"/> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <!-- /.container -->
+    </ui:define>
+
+</ui:composition>

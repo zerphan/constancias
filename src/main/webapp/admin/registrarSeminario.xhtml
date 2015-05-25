@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:h="http://java.sun.com/jsf/html"
+                 xmlns:f="http://java.sun.com/jsf/core"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="./../WEB-INF/plantillas/administracion.xhtml"
+                 xmlns:ezcomp="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    <f:metadata>
+        <f:viewAction action="#{jsfUtil.isLoginIn()}" />
+        <f:viewAction action="#{seminariosBean.prepararRegistrar()}" /> 
+        <f:viewAction action="#{gradosAcademicosBean.findAll()}"/>
+        <f:viewAction action="#{acreditadorBean.findAcreditadores()}"/>
+    </f:metadata> 
+
+    <ui:define name="contenido">
+        <div class="container">
+            <br/>
+            <ol class="breadcrumb">
+                <li><a href="gestionarProximosSeminarios.xhtml">Gestionar próximos seminarios</a></li>
+                <li class="active"> Registrar seminario</li>
+            </ol>
+            <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
+            <h1 > <!--<i class="fa fa-fw fa-plus-circle fa-2x " ></i> -->Registrar Seminario </h1>
+            <hr/>
+            <p class="justificado">
+                <strong class="colorPoli">Instrucciones: </strong> Para realizar el registro de un seminario deberás llenar 
+                los datos correspondientes y posteriormente dar click en el botón registrar.
+            </p><br/>
+            <div class="text-right">
+                <p>
+                    <a type="button" href="gestionarProximosSeminarios.xhtml" class="btn btn-xs btn-default"><i class="fa fa-arrow-circle-left"/>    Regresar</a>
+                </p> 
+            </div>
+            <br/>                    
+            <h:form  styleClass="bs-example form-horizontal">
+                <h3 class=""><i class="fa fa-ticket colorAmarillo " />
+                    Datos Generales
+                </h3>
+                <hr/>
+                <ezcomp:formularioBasicoSeminario seminario="#{seminariosBean.currentSeminario}"/>
+                <br/><br/>
+                <h3><i class="fa fa-clock-o colorVerde"/> Fecha y hora</h3>
+                <hr/>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" >Fecha</label>
+                    <div class="col-lg-10">
+                        <p:calendar  pattern="MM/dd/yyyy" style="font-size: 12px;"
+                                     value="#{seminariosBean.fechaInicio}"
+                                     styleClass="control-label"
+                                     mindate="#{jsfUtil.fechaActual}"                                     
+                                     pages="1"
+                                     id="inputFecha"                                     
+                                     navigator="true"
+                                     readonlyInput="true"
+                                     required="true"  requiredMessage="La fecha es requerida"
+                                     >
+                            <p:ajax event="dateSelect"  update="inputHoraInicio" listener="#{seminariosBean.eventoSeleccionCalendario}"/>
+                        </p:calendar>
+                        <p:message for="inputFecha"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" >Hora de inicio</label>
+                    <div class="col-lg-10">
+                        <p:calendar  pattern="hh:mm a" style="font-size: 12px;"
+                                     value="#{seminariosBean.fechaHoraInicio_aux}"
+                                     timeOnly="true"                                     
+                                     styleClass="control-label"
+                                     stepMinute="15"
+                                     maxHour="20"
+                                     minHour="#{seminariosBean.horaMin}"
+                                     pages="1"
+                                     id="inputHoraInicio"
+                                     readonlyInput="true"
+                                     required="true"  requiredMessage="La hora de inicio es requerida"
+                                     />
+                        <p:message for="inputHoraInicio"/>
+                    </div>
+                </div>
+                <br/><br/>
+                <h3><i class="fa fa-file colorAzul"/> 
+                    Constancia de asistencia</h3>
+                <hr/>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label" >Código seguridad:</label>
+                    <div class="col-lg-10">
+                        <p:inputText styleClass="form-control"
+                                     id="inputCodigoSeguridad"
+                                     value="#{seminariosBean.currentSeminario.codigoSeguridad}"
+                                     required="true"  requiredMessage="El código de seguridad es requerido"
+                                     placeholder="Ingresa el código de seguridad a 6 caracteres"
+                                     maxlength="6"/>
+                        <p:message for="inputCodigoSeguridad"/>
+                    </div>
+                    <br/>
+                    <label class="col-lg-2 control-label" >Tiempo para generar constancias:</label>
+                    <div class="col-lg-10">
+                        <p:selectOneRadio id="options" value="#{seminariosBean.tiempoTolerancia}" 
+                                          style="margin-top: 10px!important;font-style: normal!important; font-size: 15px;" 
+                                          required="true"
+                                          requiredMessage="El tiempo para generar constancias es requerido">  
+                            <!--   <f:selectItem itemLabel="30 minutos" itemValue="30" />  
+                               <f:selectItem itemLabel="1 hora" itemValue="60" />  -->
+                            <f:selectItem itemLabel="1:30 hora" itemValue="90" />  
+                        </p:selectOneRadio> 
+                    </div>
+
+                </div>
+                <br/><br/>
+                <h3><i class="fa fa-file colorVerde2"/> 
+                    <sup>*</sup> Constancia ponente</h3>
+                <hr/>
+                <label class="col-lg-2 control-label" >Firma izquierda:</label>
+                <div class="col-lg-10">                    
+                    <p:selectOneMenu value="#{seminariosBean.currentSeminario.acreditador1}"
+                                     converter="AcreditadorConverter" 
+                                     required="true"
+                                     id="inputAcreditador1"
+                                     requiredMessage="El acreditador de la firma izq es requerido"
+                                     style="width: 100%;">
+                        <f:selectItem itemLabel="-- Selecciona al acreditador -- " itemValue="0"/>
+                        <f:selectItems value="#{acreditadorBean.acreditadoresList}" var="var" 
+                                       itemValue="#{var}" itemLabel="#{var.descripcion}"/>
+                    </p:selectOneMenu>
+                    <span class="small">Default: Director de la ESCOM</span>
+                    <br/>
+                    <p:message for="inputAcreditador1"/>
+                </div>
+                <br/><br/>
+                <br/><br/>
+                <label class="col-lg-2 control-label" >Firma derecha:</label>
+                <div class="col-lg-10">
+                    <p:selectOneMenu value="#{seminariosBean.currentSeminario.acreditador2}"
+                                     converter="AcreditadorConverter" 
+                                     required="true"
+                                     id="inputAcreditador2"
+                                     requiredMessage="El acreditador de la firma der es requerido"
+                                     style="width: 100%;">
+                        <f:selectItem itemLabel="-- Selecciona al acreditador -- " itemValue="0"/>
+                        <f:selectItems value="#{acreditadorBean.acreditadoresList}" var="var" 
+                                       itemValue="#{var}" itemLabel="#{var.descripcion}"/>
+                    </p:selectOneMenu>
+                    <span class="small">Default: Jefe de SEPI</span>
+                    <br/>
+                    <p:message for="inputAcreditador2"/>
+                </div>                
+                <br/><br/><br/>
+                <h3><i class="glyphicon glyphicon-user colorRojo"/><sup>*</sup> Ponente</h3>
+                <hr/>
+                <ezcomp:formularioPonente persona="#{seminariosBean.currentPonente}"/>
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <p:commandLink 
+                            action="#{seminariosBean.registrarCurrentSeminario()}"                                  
+                            ajax="true"
+                            update="@form"
+                            >
+                            <button type="button" class="btn  btn-primary"><i class="glyphicon glyphicon-ok"/> Registrar</button>
+                        </p:commandLink>
+                        <a type="button" href="gestionarProximosSeminarios.xhtml" class="btn btn-default">
+                            <i class="glyphicon glyphicon-remove"/> Cancelar
+                        </a>
+                    </div>
+                </div>
+            </h:form>
+
+            <div class="row text-center">
+                <br/><br/>
+                <span class=" label-default " style="color: white">* Si no encuentra al acreditador ó el grado académico deseado, consultelo con alguna persona con cuenta de administración avanzada.</span>
+            </div>
+        </div>
+        <!-- /.container -->
+        <script>
+            $(document).ready(function() {
+                // $("#registrarSeminario").addClass("active");
+            });
+        </script>
+    </ui:define>
+
+</ui:composition>

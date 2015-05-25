@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"          
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="grado" required="true" type="modelo.entidades.GradoAcademico"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="form-group">
+            <label class="col-md-2 control-label" >Nombre</label>
+            <div class="col-md-10"> 
+                <p:inputText value="#{cc.attrs.grado.nombre}"
+                             styleClass="form-control" required="true"
+                             placeholder="Ingresa el nombre"
+                             id="inputNombre"
+                             requiredMessage="El nombre es requerido"/>
+                <p:message for="inputNombre"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label"  >Abreviación:</label>
+            <div class="col-md-10" >
+                <p:inputText value="#{cc.attrs.grado.abreviacion}" 
+                             styleClass="form-control" required="true"
+                             placeholder="Ingresa la abreviación"
+                             id="inputAbreviacion"
+                             requiredMessage="La abreviación es requerida"/>
+                <p:message for="inputAbreviacion"/>
+            </div>
+        </div>
+    </cc:implementation>
+</html>
