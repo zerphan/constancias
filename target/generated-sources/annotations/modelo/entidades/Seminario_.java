@@ -9,7 +9,7 @@ import modelo.entidades.Acreditador;
 import modelo.entidades.Asistente;
 import modelo.entidades.Ponente;
 
-@Generated(value="EclipseLink-2.5.1.v20130918-rNA", date="2015-05-25T14:19:51")
+@Generated(value="EclipseLink-2.5.1.v20130918-rNA", date="2015-05-26T11:17:58")
 @StaticMetamodel(Seminario.class)
 public class Seminario_ { 
 

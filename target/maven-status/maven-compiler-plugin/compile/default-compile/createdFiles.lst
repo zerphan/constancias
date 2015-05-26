@@ -41,7 +41,6 @@ web/beans/constantes/ConstanteCreditosPorHoraBean.class
 web/websocket/WebSocketTest.class
 web/beans/seminarios/CurrentSeminarioBean.class
 modelo/entidades/Asistente.class
-.netbeans_automatic_build
 modelo/facade/AcreditadorFacade.class
 modelo/entidades/Ponente.class
 modelo/entidades/Seminario_.class

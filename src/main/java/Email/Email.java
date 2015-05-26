@@ -36,8 +36,8 @@ public class Email {
         this.pass=pass;
     }
    public Email(){
-        this.user="zerphank@gmail.com";
-        this.pass="Vivirparaluchar.";
+        this.user="asdf";
+        this.pass="asdf";
     }
    
     public boolean enviarMensajeTexto(String subject,String body,String recipient){
