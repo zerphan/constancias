@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/MavenSistemaConstancias">
-  <!-- <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="50" maxIdle="30" maxWait="10000" name="jndi_ConstanciasSeminarios" password="root" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/constancias" 
-    username="root"/> -->
-</Context>

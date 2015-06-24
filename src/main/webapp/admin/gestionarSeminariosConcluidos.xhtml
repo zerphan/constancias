@@ -12,24 +12,13 @@
     </f:metadata> 
 
     <ui:define name="contenido">
-        <div>            
-            <section class="bg-escompasto bg-responsivo">
-                <div class="col-sm-6 col-sm-offset-3 text-center">
-                    <div class="textoInBg" >
-                        <h2 style="color: white"> SEMINARIOS CONCLUIDOS</h2>
-                        <hr/>
-                        <p class="justificado label label-info"> ADMINISTRACIÓN</p>
-                    </div>
-                </div>
-            </section>
-        </div>
         <div class="container">
             <p:growl autoUpdate="true" life="1500"/>
             <h1>Seminarios Concluidos</h1>           
             <hr/>  
             <p class="justificado " >
                 <strong class="">Instrucciones:</strong> En ésta sección se muestra una tabla con los seminarios que han sido concluidos, puedes realizar las siguientes acciones al seleccionar un seminario concluido:<br/>
-                <ul>
+                <ul style="list-style-type: none;">
                     <li><i class="fa fa-check colorVerde"/> Descargar Lista de Asistencia</li>
                     <li><i class="fa fa-check colorVerde"/> Descargar Constancia del Ponente</li>                    
                     <li>
@@ -55,11 +44,11 @@
             </p><br/>
             <h:form >
                 <p:dataTable value="#{seminariosBean.listSeminarios}"
-                             tableStyle="font-size: 12px; "
+                             tableStyle="font-size: 12px;"
                              id="tablaSeminariosConcluidos"
                              var="var" emptyMessage="No se han registrado seminarios en el sistema" 
                              styleClass="ui-datatable-hor-scroll"
-                             rows="15"
+                             rows="10"
                              liveResize="true"
                              liveScroll="true"
                              paginatorAlwaysVisible="true"                             
@@ -75,51 +64,36 @@
                     <f:facet name="header">  
                         <p:outputLabel value="Seminarios concluidos"/>
                     </f:facet>
-                    <p:column style="padding-top:20px;padding-bottom:20px">
-                        <f:facet name="header">  
-                            <p:outputLabel value="Id" />  
-                        </f:facet>  
-                        #{var.idSeminario}
-                    </p:column> 
-
                     <p:column  filterBy="#{var.tituloPonencia}"
                                id="tableTitulo"
-                               style="min-width: 300px;text-transform: capitalize">
+                               style="width: 300px;text-transform: capitalize;padding-top: 10px;padding-bottom: 10px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Titulo Ponencia" />  
                         </f:facet>  
                         #{var.tituloPonencia}
                     </p:column>
                     <p:column filterBy="#{var.ponente.nombre}"
-                              style="text-transform: capitalize">
+                              style="text-transform: capitalize;width:150px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Nombre Ponente" />  
                         </f:facet>                                                  
                         #{var.ponente.nombre}                  
                     </p:column>
                     <p:column filterBy="#{var.ponente.apellidoPaterno}"
-                              style="text-transform: capitalize">
+                              style="text-transform: capitalize;width:150px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Apellido Paterno Ponente" />  
                         </f:facet>  
                         #{var.ponente.apellidoPaterno}
                     </p:column>
                     <p:column  filterBy="#{var.ponente.apellidoMaterno}"
-                               style="text-transform: capitalize">
+                               style="text-transform: capitalize;width:150px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Apellido Materno Ponente" />  
                         </f:facet>  
                         #{var.ponente.apellidoMaterno}
                     </p:column>
-                    <!--
-                    <p:column style="min-width: 150px" filterBy="#{var.ponente.nombre} #{var.ponente.apellidoPaterno}">
-                        <f:facet name="header">  
-                            <p:outputLabel value="Ponente" />  
-                        </f:facet>  
-                        <p:outputLabel value="#{var.ponente.nombre} #{var.ponente.apellidoPaterno} #{var.ponente.apellidoMaterno}"
-                                       style="padding: 10px"/>
-                    </p:column> -->
-                    <p:column >
+                    <p:column style="width:100px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Número de Asistentes" />  
                         </f:facet>  
@@ -132,32 +106,23 @@
                             <p:outputLabel value="Día" />  
                         </f:facet>  
                         #{var.fechaInicio.dayOfMonth().get()}
-                        <!--
-                        <p:outputLabel value="#{var.fechaInicio.toDate()}" >
-                            <f:convertDateTime  pattern="dd" />
-                        </p:outputLabel>
-                        -->
                     </p:column>
                     <p:column  filterBy="#{var.fechaInicio.monthOfYear().getAsText()}"
-                               style="text-transform: capitalize">
+                               style="text-transform: capitalize;width:80px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Mes" />  
                         </f:facet>  
-                        #{var.fechaInicio.monthOfYear().getAsText()}
-                        <!--
-                        <p:outputLabel value="#{var.fechaInicio.toDate()}" style="padding: 5px">
-                            <f:convertDateTime  pattern="MMMMM" />
-                        </p:outputLabel>
-                        -->
+                        <h:outputLabel value="#{var.fechaInicio.toDate()}"  
+                                       style="text-transform: capitalize;font-weight:normal">
+                            <f:convertDateTime  pattern="MMMMM" locale="ES" />
+                        </h:outputLabel>
                     </p:column>
-                    <p:column  filterBy="#{var.fechaInicio.year}">
+                    <p:column  filterBy="#{var.fechaInicio.year}" style="width:60px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Año" />  
                         </f:facet>  
                         #{var.fechaInicio.year().get()}<br/>                        
-
                     </p:column> 
-
                 </p:dataTable>
             </h:form>
         </div>
@@ -257,7 +222,7 @@
                             <!-- LISTA DE ACCIONES-->
                             <!-- DESCARGA DE LISTA DE ASISTENTES-->
                             <p:commandLink 
-                                action="#{documentosBean.eventoExportDocumentoProbatorio(actionEvent)}" 
+                                action="#{documentosBean.eventDownloadAttendanceList(actionEvent)}" 
                                 ajax="false"
                                 >    
                                 <f:setPropertyActionListener value="#{seminariosBean.currentSeminario}"                                                         
@@ -268,9 +233,10 @@
                             <!-- DESCARGA DE CONSTANCIA DE PONENTE-->
                             <br/>
                             <p:commandLink  oncomplete="hideModalAcciones"
-                                            action="#{seminariosBean.exportarConstanciaPonente()}"
+                                            actionListener="#{documentosBean.eventDownloadOratorCertificate(seminariosBean.currentSeminario)}"
                                             ajax="false" 
-                                            style=" text-decoration: none;" >
+                                            style=" text-decoration: none;" 
+                                            target="_blank">
                                 <button type="button" class="btn btn-info btn-block" data-dismiss="modal"> 
                                     <i class="fa fa-download"/> Descargar Constancia Ponente</button>
                             </p:commandLink>
@@ -481,7 +447,7 @@
 
         <!-- /.container -->
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
 
             });
             //Funciones modal confirmacion eliminar seminario

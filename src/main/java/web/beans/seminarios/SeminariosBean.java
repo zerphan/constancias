@@ -62,6 +62,7 @@ public class SeminariosBean extends JsfUtil
         currentSeminario = new Seminario();
         currentPonente = new Ponente();
         listFilteredSeminarios = new ArrayList<>();
+        currentSeminario = new Seminario();
     }
 
     @PostConstruct
@@ -81,7 +82,7 @@ public class SeminariosBean extends JsfUtil
 
     public void findProximosSeminarios() {
         listSeminarios = seminarioFacade.findSeminariosProximos();
-        if(listSeminarios==null){
+        if (listSeminarios == null) {
             listSeminarios = new ArrayList<>();
             listSeminarios.clear();
         }
@@ -164,18 +165,16 @@ public class SeminariosBean extends JsfUtil
 
     public String registrarCurrentSeminario() {
         try {
-            fechaInicio.setHours(fechaHoraInicio_aux.getHours());
-            fechaInicio.setMinutes(fechaHoraInicio_aux.getMinutes());
-            currentSeminario.setFechaInicio(new DateTime(fechaInicio));
-            //DateTime fecha = new DateTime(currentSeminario.getFechaInicio());
-            currentSeminario.setFechaTermino(currentSeminario.getFechaInicio().plusMinutes(Constantes.MINUTOS_TOLERANCIA));
-            ponenteFacade.create(currentPonente);
-            currentSeminario.setPonente(currentPonente);
-            seminarioFacade.create(currentSeminario);
-            currentPonente.setArchivoConstancia(documentosBean.crearConstanciaPonente(currentSeminario));
-            ponenteFacade.edit(currentPonente);
-            seminarioFacade.edit(currentSeminario);
-
+            this.fechaInicio.setHours(this.fechaHoraInicio_aux.getHours());
+            this.fechaInicio.setMinutes(this.fechaHoraInicio_aux.getMinutes());
+            this.currentSeminario.setFechaInicio(new DateTime(this.fechaInicio));
+            this.currentSeminario.setFechaTermino(this.currentSeminario.getFechaInicio().plusMinutes(150));// 150 minutes of tolerance
+            this.ponenteFacade.create(this.currentPonente);
+            this.currentSeminario.setPonente(this.currentPonente);
+            this.seminarioFacade.create(this.currentSeminario);
+            this.currentPonente.setArchivoConstancia(this.documentosBean.crearConstanciaPonente(this.currentSeminario));
+            this.ponenteFacade.edit(this.currentPonente);
+            this.seminarioFacade.edit(this.currentSeminario);
             addSuccessMessage("Seminario creado satisfactoriamente");
             redirectFromContextPath("admin/gestionarProximosSeminarios.xhtml");
         } catch (Exception e) {
@@ -184,7 +183,6 @@ public class SeminariosBean extends JsfUtil
         return "";
     }
 
-    
     @Override
     public void eliminar() {
         try {

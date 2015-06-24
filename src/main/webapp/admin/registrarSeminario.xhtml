@@ -95,18 +95,6 @@
                         <p:message for="inputCodigoSeguridad"/>
                     </div>
                     <br/>
-                    <label class="col-lg-2 control-label" >Tiempo para generar constancias:</label>
-                    <div class="col-lg-10">
-                        <p:selectOneRadio id="options" value="#{seminariosBean.tiempoTolerancia}" 
-                                          style="margin-top: 10px!important;font-style: normal!important; font-size: 15px;" 
-                                          required="true"
-                                          requiredMessage="El tiempo para generar constancias es requerido">  
-                            <!--   <f:selectItem itemLabel="30 minutos" itemValue="30" />  
-                               <f:selectItem itemLabel="1 hora" itemValue="60" />  -->
-                            <f:selectItem itemLabel="1:30 hora" itemValue="90" />  
-                        </p:selectOneRadio> 
-                    </div>
-
                 </div>
                 <br/><br/>
                 <h3><i class="fa fa-file colorVerde2"/> 
@@ -173,7 +161,7 @@
         </div>
         <!-- /.container -->
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 // $("#registrarSeminario").addClass("active");
             });
         </script>

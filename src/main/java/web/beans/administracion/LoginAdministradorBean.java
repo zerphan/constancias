@@ -8,7 +8,7 @@ package web.beans.administracion;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import modelo.PublicidadSeminario;
+import model.dto.PublicidadSeminario;
 import modelo.entidades.Administrador;
 import modelo.facade.AdministradorFacade;
 import modelo.facade.SeminarioFacade;

@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +20,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import modelo.CodigoQR;
-import modelo.PublicidadSeminario;
+import model.dto.PublicidadSeminario;
 import modelo.entidades.Asistente;
 import modelo.entidades.DefinicionCodigoQR;
 import modelo.entidades.Ponente;
@@ -30,6 +32,7 @@ import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -38,6 +41,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import org.joda.time.DateTime;
 import web.beans.asistentes.AsistentesBean;
 import web.beans.util.JsfUtil;
+import javax.servlet.http.HttpServletResponse;
 import static web.beans.util.JsfUtil.addSuccessMessage;
 import static web.beans.util.JsfUtil.getPathConstanciaAsistenciaJasper;
 import static web.beans.util.JsfUtil.getResponse;
@@ -92,11 +96,10 @@ public class DocumentosBean extends JsfUtil implements Serializable {
     }
 
     public byte[] crearConstanciaPonente(Seminario currentSeminario) {
-        Map hm = (Map) new HashMap();
-        byte[] pdfBytes;
+        Map hm = new HashMap();
         System.out.println(currentSeminario.getTituloPonencia());
+        hm.put("REPORT_LOCALE", new Locale("ES"));
         hm.put("NOMBRE_PONENTE", currentSeminario.getPonente().getNombreCompleto());
-        System.out.println("5");
         hm.put("TITULO_SEMINARIO", currentSeminario.getTituloPonencia());
         hm.put("LUGAR_SEMINARIO", currentSeminario.getDireccion());
         hm.put("FECHA_SEMINARIO", currentSeminario.getFechaInicio().toDate());
@@ -104,36 +107,100 @@ public class DocumentosBean extends JsfUtil implements Serializable {
         hm.put("NOMBRE_ACREDITADOR_DERECHA", currentSeminario.getAcreditador2().getNombreCompleto());
         hm.put("PUESTO_ACREDITADOR_IZQUIERDA", currentSeminario.getAcreditador1().getDescripcion());
         hm.put("PUESTO_ACREDITADOR_DERECHA", currentSeminario.getAcreditador2().getDescripcion());
-        // InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
-        //       generarCodigoQRSeminario()); 
-        //hm.put("IMAGEN_CODIGOQR", inputStreamImagenCodigoQR);
         try {
-            System.out.println("5");
-            print = JasperFillManager.fillReport(getPathConstanciaPonenteJasper(), hm, new JREmptyDataSource());
-            pdfBytes = JasperExportManager.exportReportToPdf(print);
-            System.out.println("6");
-            //Ponente ponente = currentSeminario.getPonente();
-            //ponente.setArchivoConstancia(pdfBytes);
-            //ponenteFacade.edit(ponente);
+            this.print = JasperFillManager.fillReport(getPathConstanciaPonenteJasper(), hm, new JREmptyDataSource());
+            byte[] pdfBytes = JasperExportManager.exportReportToPdf(this.print);
             return pdfBytes;
         } catch (JRException ex) {
             Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-
     }
 
-    public void eventoExportDocumentoProbatorio(ActionEvent actionEvent) {
-        //System.out.println("Entro a exportar documento probatorio");
-        if (seminario.getFechaTermino().isBeforeNow()) {
-            crearDocumentoProbatorio();
+    /**
+     * Method than handles request of download the orator's certificate
+     *
+     * @param seminar
+     */
+    public void eventDownloadOratorCertificate(Seminario seminar) {
+        exportOratorCertificate(seminar);
+    }
+
+    /**
+     * Method than generates the orator's certificate and response with a PDF
+     * file
+     */
+    private void exportOratorCertificate(Seminario seminar) {
+        JasperPrint jasperPrint;
+        Map hm = (Map) new HashMap();
+        byte[] pdfBytes;
+        List list;
+        JRExporter exporter;
+        JRBeanCollectionDataSource dataSource;
+        // Getting HttpServletResponse
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        // Setting parameters
+        hm.put("REPORT_LOCALE", new Locale("ES"));
+        hm.put("NOMBRE_PONENTE", seminar.getPonente().getNombreCompleto());
+        hm.put("TITULO_SEMINARIO", seminar.getTituloPonencia());
+        hm.put("LUGAR_SEMINARIO", seminar.getDireccion());
+        hm.put("FECHA_SEMINARIO", seminar.getFechaInicio().toDate());
+        hm.put("NOMBRE_ACREDITADOR_IZQUIERDA", seminar.getAcreditador1().getNombreCompleto());
+        hm.put("NOMBRE_ACREDITADOR_DERECHA", seminar.getAcreditador2().getNombreCompleto());
+        hm.put("PUESTO_ACREDITADOR_IZQUIERDA", seminar.getAcreditador1().getDescripcion());
+        hm.put("PUESTO_ACREDITADOR_DERECHA", seminar.getAcreditador2().getDescripcion());
+        try {
+            jasperPrint = JasperFillManager.fillReport(getPathConstanciaPonenteJasper(), hm, new JREmptyDataSource());
+        } catch (JRException ex) {
+            Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+            addErrorMessage("Error al generar la lista de asistencia: " + ex.getMessage());
+            return;
+        }
+        // Response settings
+        response.reset();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment;filename=oratorCertificate" + seminar.getIdSeminario() + ".pdf");
+        exporter = new JRPdfExporter();
+        // Export the file
+        try {
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, response.getOutputStream());
+            exporter.exportReport();
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            context.responseComplete();
+        }
+    }
+
+    /**
+     * Method than handles request of download the attendance list
+     *
+     * @param actionEvent
+     */
+    public void eventDownloadAttendanceList(ActionEvent actionEvent) {
+        if (seminario.getFechaTermino().isBeforeNow()) {// If the seminar is completed then we can download the attendance list
+            exportAttendanceList();
         }
 
     }
 
-    private void crearDocumentoProbatorio() {
+    /**
+     * Method than generates the attendance list and response with a PDF file
+     */
+    private void exportAttendanceList() {
+        JasperPrint jasperPrint;
         Map hm = (Map) new HashMap();
         byte[] pdfBytes;
+        List list;
+        JRExporter exporter;
+        JRBeanCollectionDataSource dataSource;
+        // Getting HttpServletResponse
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        // Setting parameters
+        hm.put(JRParameter.REPORT_LOCALE, new Locale("ES"));
         hm.put("NOMBRE_PONENTE", seminario.getPonente().getNombreCompleto());
         hm.put("TITULO_SEMINARIO", seminario.getTituloPonencia());
         hm.put("TOTAL_ASISTENTES", "" + seminario.getAsistenteList().size());
@@ -142,38 +209,41 @@ public class DocumentosBean extends JsfUtil implements Serializable {
         InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
                 generarCodigoQRSeminario());
         hm.put("IMAGEN_CODIGOQR", inputStreamImagenCodigoQR);
-        List list = seminario.getAsistenteList();
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list, false);
+        list = seminario.getAsistenteList();
+        dataSource = new JRBeanCollectionDataSource(list, false);
         try {
-            print = JasperFillManager.fillReport(getPathDocumentoProbatorioJasper(), hm, dataSource);
+            jasperPrint = JasperFillManager.fillReport(getPathAttendanceListJasper(), hm, dataSource);
         } catch (JRException ex) {
             Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+            addErrorMessage("Error al generar la lista de asistencia: " + ex.getMessage());
+            return;
         }
-        FacesContext.getCurrentInstance().responseComplete();
-        getResponse().setContentType("application/pdf");
-        getResponse().addHeader("Content-disposition", "attachment; filename=listaAsistentes"
-                + seminario.getIdSeminario() + ".pdf");
-        JRExporter exporter = new JRPdfExporter();
-        //exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outPutFileName);
-        exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
-        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, getServletOutputStream());
+        // Response settings
+        response.reset();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment;filename=listaAsistentes" + seminario.getIdSeminario() + ".pdf");
+        exporter = new JRPdfExporter();
+        // Export the file
         try {
-            //exporter.exportReport();
-            JasperExportManager.exportReportToPdfStream(print, getServletOutputStream());
-
-        } catch (JRException ex) {
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, response.getOutputStream());
+            exporter.exportReport();
+        } catch (IOException | JRException ex) {
             Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            FacesContext.getCurrentInstance().responseComplete();
+            context.responseComplete();
         }
-        //addSuccessMessage("Publicidad generada satisfactoriamente");
-
     }
 
-    public void eventoExportPublicidadPDF(ActionEvent actionEvent) {
-        PublicidadSeminario publicidadSeminario = new PublicidadSeminario(seminario);
+    /**
+     * Method than handles request of download seminar's publicity
+     *
+     * @param seminar
+     */
+    public void eventExportPublicity(Seminario seminar) {
+        PublicidadSeminario publicidad = new PublicidadSeminario(seminar);
         try {
-            exportPublicidadPDF(publicidadSeminario);
+            exportPublicity(publicidad);
         } catch (IOException ex) {
             Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -199,38 +269,51 @@ public class DocumentosBean extends JsfUtil implements Serializable {
         }
     }
 
-    public void exportPublicidadPDF(PublicidadSeminario publicidad) throws IOException {
-        initPublicidad(publicidad);
-
-        getResponse().addHeader("Content-disposition", "attachment; filename=seminario"
-                + publicidad.getIdSeminario() + ".pdf");
-        JRExporter exporter = new JRPdfExporter();
-        //exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, outPutFileName);
-        exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
-        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, getServletOutputStream());
-        try {
-            exporter.exportReport();
-            //JasperExportManager.exportReportToPdfStream(print, getServletOutputStream());
-        } catch (JRException ex) {
-            Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        addSuccessMessage("Publicidad generada satisfactoriamente");
-
-    }
-
-    public void initPublicidad(PublicidadSeminario publicidad) {
-        InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
-                generarCodigoQRSeminarioPublicidad(publicidad));
+    /**
+     * Export publicity of an specific seminar
+     *
+     * @param publicidadSeminario
+     * @throws IOException
+     */
+    public void exportPublicity(PublicidadSeminario publicidadSeminario) throws IOException {
+        //Init Variables
         Map hm = (Map) new HashMap();
-        hm.put("idSeminarioParametro", publicidad.getIdSeminario());
-        hm.put("imagenCodigoQR", inputStreamImagenCodigoQR);
-        List list = new ArrayList();
-        list.add(publicidad);
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(list, false);
+        JRExporter exporter = new JRPdfExporter();
+        JasperPrint jasperPrint = null;
+        JRBeanCollectionDataSource dataSource;
+        InputStream inputStreamImagenCodigoQR;
+        // Getting HttpServletResponse
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        // Setting Parameters
+        hm.put(JRParameter.REPORT_LOCALE, new Locale("ES"));
+        hm.put("idSeminarioParametro", publicidadSeminario.getIdSeminario());
+        hm.put("imagenCodigoQR", new ByteArrayInputStream(
+                generarCodigoQRSeminarioPublicidad(publicidadSeminario)));
+        {
+            List list = new ArrayList();
+            list.add(publicidadSeminario);
+            dataSource = new JRBeanCollectionDataSource(list, false);
+        }
         try {
-            print = JasperFillManager.fillReport(getPathPublicidadJasper(), hm, dataSource);
+            jasperPrint = JasperFillManager.fillReport(getPathPublicidadJasper(), hm, dataSource);
         } catch (JRException ex) {
             Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        // Response settings
+        response.reset();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment; filename=seminario" + publicidadSeminario.getIdSeminario() + ".pdf");
+        // Export the file
+        try {
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, response.getOutputStream());
+            exporter.exportReport();
+        } catch (JRException ex) {
+            Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            context.responseComplete();
         }
     }
 

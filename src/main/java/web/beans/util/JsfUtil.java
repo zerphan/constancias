@@ -138,7 +138,7 @@ public class JsfUtil implements Serializable {
         return path;
     }
 
-    public static String getPathDocumentoProbatorioJasper() {
+    public static String getPathAttendanceListJasper() {
         String path = getExternalContext().getRealPath("/");
         if (OSValidator.isWindows()) {
             path += Constantes.FILE_DOCUMENTO_PROBATORIO_JASPER_WINDOWS;

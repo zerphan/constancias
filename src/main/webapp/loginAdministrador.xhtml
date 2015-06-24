@@ -19,13 +19,12 @@
                     </p><br/>
                     <div class="well well-lg container col-md-12">
                         <h2 class="centrado">
-                            <i class="glyphicon fa-3x glyphicon-user colorRojo"/> 
+                            <i class="glyphicon fa-3x glyphicon-user colorPoli"/> 
                             <i class="fa fa-2x fa-key colorAmarillo"/>
                         </h2>
                         <h:form  styleClass="bs-example form-horizontal ">
 
                             <div class="form-group">
-
                                 <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
                                 <h:outputLabel styleClass="col-lg-2 control-label" for="inputUsername">Username</h:outputLabel>
                                 <div class="col-lg-10">
@@ -54,7 +53,7 @@
                                     <p:commandLink  action="#{loginAdministradorBean.doLoginAdministrador()}"                                  
                                                     ajax="true"
                                                     update="@form">
-                                        <button type="button" class="btn btn-primary  btn-lg"> Iniciar sesión</button>
+                                        <button type="button" class="btn btn-primary" style="width: 200px"> Iniciar sesión</button>
                                     </p:commandLink>
                                 </div>
                             </div>
@@ -67,7 +66,7 @@
         </div>
         <!-- /.container -->
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $("#loginAdministrador").addClass("active");
             });
         </script>

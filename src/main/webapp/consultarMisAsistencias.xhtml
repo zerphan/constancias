@@ -8,47 +8,49 @@
                 xmlns:p="http://primefaces.org/ui">   
     <ui:define name="contenido">        
         <div class="container">
-
-            <div class="col-md-12">
-                <br/>
-                <h1>Consultar mis asistencias</h1>
-                <hr/>
-                <p class="justificado">
-                    <strong>Instrucciones:</strong> En ésta sección puedes descargar tus constancias de asistencia, ingresa el email con el cual registraste tus asistencias a los seminarios y presiona el boton buscar.
-                </p><br/>                    
+            <div class="row">
+                <div class="col-lg-12">
+                    <br/>
+                    <h1>Consultar mis asistencias</h1>
+                    <hr/>
+                    <p class="justificado">
+                        <strong>Instrucciones:</strong> En ésta sección puedes consultar y descargar tus constancias de asistencia, ingresa el email con el cual registraste tus asistencias a los seminarios y presiona el botón buscar.
+                    </p><br/>     
+                </div>
             </div>
-            <div class="col-md-12">
-                <h:form >
-                    <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
-                    <div class="row">
-                        <div class="col-lg-10">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"/> </span>
-                                <p:inputText styleClass="form-control"
-                                             id="inputEmail"
-                                             value="#{asistentesBean.currentAsistente.email}"
-                                             required="true"  requiredMessage="El email es requerido"
-                                             placeholder="Ingresa tu email"
-                                             validatorMessage="Ingresa un email válido"
-                                             > 
-                                    <f:validateRegex
-                                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                                </p:inputText>
-                            </div>
-                            <p:message for="inputEmail"/>
+            <h:form >
+                <p:growl autoUpdate="true" life="1500" globalOnly="true"/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"/> </span>
+                            <p:inputText styleClass="form-control"
+                                         id="inputEmail"
+                                         value="#{asistentesBean.currentAsistente.email}"
+                                         required="true"  requiredMessage="El email es requerido"
+                                         placeholder="Ingresa tu email"
+                                         validatorMessage="Ingresa un email válido"
+                                         > 
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            </p:inputText>
                         </div>
-                        <div class="col-lg-2">
-                            <p:commandLink  action="#{asistentesBean.findByEmail()}"                                  
-                                            ajax="true"
-                                            update="@form">
-                                <button type="button" class="btn btn-primary  btn-block"> <i class="fa fa-search"/> Buscar </button>
-                            </p:commandLink>
-                            <!--   update="@form,@([id$=resultadoBusqueda]),@([id$=listaConstancias])" -->
-                        </div>
+                        <p:message for="inputEmail"/>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-5 center_content">
-                            <h:panelGroup id="detalleCreditos" rendered="#{asistentesBean.listFilteredAsistentes.size() gt 0}">
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p:commandLink  action="#{asistentesBean.findByEmail()}"                                  
+                                        ajax="true"
+                                        update="@form">
+                            <button type="button" class="btn btn-primary" style="margin-top:10px; width: 200px;"> <i class="fa fa-search"/> Buscar </button>
+                        </p:commandLink>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-5 center_content">
+                        <h:panelGroup id="detalleCreditos">
+                            <h:panelGroup  rendered="#{asistentesBean.listFilteredAsistentes.size() gt 0}">
                                 <br/>
                                 <div  class="panel panel-default">
                                     <div class="panel-heading ">
@@ -63,71 +65,73 @@
                                     </div>
                                 </div>
                             </h:panelGroup>
-                        </div>
+                        </h:panelGroup>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <h:panelGroup rendered="#{(asistentesBean.asistentesList ne null) and not empty(asistentesBean.asistentesList) }">
-                                <p:dataTable value="#{asistentesBean.asistentesList}"
-                                             tableStyle="font-size: 13px;"
-                                             emptyMessage="Sin resultados"
-                                             styleClass="ui-datatable-hor-scroll"
-                                             paginatorAlwaysVisible="true"                             
-                                             paginatorPosition="bottom"
-                                             paginator="true"
-                                             tableStyleClass="text-center"  
-                                             var="var">
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h:panelGroup rendered="#{(asistentesBean.asistentesList ne null) and not empty(asistentesBean.asistentesList) }">
+                            <p:dataTable value="#{asistentesBean.asistentesList}"
+                                         tableStyle="font-size: 13px;"
+                                         emptyMessage="Sin resultados"
+                                         styleClass="ui-datatable-hor-scroll"
+                                         paginatorAlwaysVisible="true"                             
+                                         paginatorPosition="bottom"
+                                         paginator="true"
+                                         tableStyleClass="text-center"  
+                                         var="var">
+                                <f:facet name="header">  
+                                    <p:outputLabel value="Mis asistencias "/>  
+                                </f:facet>         
+
+                                <p:column style="width: 200px">
                                     <f:facet name="header">  
-                                        <p:outputLabel value="Mis asistencias "/>  
-                                    </f:facet>         
+                                        <p:outputLabel value="Constancia" />  
+                                    </f:facet>  
+                                    <p:commandLink  actionListener="#{asistentesBean.eventDownloadAttendanceCertificate(var)}"
+                                                    ajax="false"
+                                                    target="_blank"  >
+                                        <button class="btn btn-primary">
+                                            <i class="fa fa-download"/> Descargar
+                                        </button>
+                                    </p:commandLink>                      
+                                </p:column>
 
-                                    <p:column style="min-width: 200px">
-                                        <f:facet name="header">  
-                                            <p:outputLabel value="Constancia" />  
-                                        </f:facet>  
-                                        <p:commandLink action="#{asistentesBean.exportarConstancia()}"
-                                                       ajax="false">
-                                            <f:setPropertyActionListener value="#{var}"                                                         
-                                                                         target="#{asistentesBean.currentAsistente}"/>
-                                            <button class="btn btn-primary">
-                                                <i class="fa fa-download"/> Descargar
-                                            </button>
-
-                                        </p:commandLink>                      
-                                    </p:column>
-
-                                    <p:column style="min-width: 200px">
-                                        <f:facet name="header">  
-                                            <p:outputLabel value="Seminario" />  
-                                        </f:facet>  
-                                        #{var.seminario.tituloPonencia}                         
-                                    </p:column>
-                                    <p:column style="min-width: 200px">
-                                        <f:facet name="header">  
-                                            <p:outputLabel value="Asistente" />  
-                                        </f:facet>  
-                                        #{var.nombre} #{var.apellidoPaterno} #{var.apellidoMaterno}                         
-                                    </p:column>
-                                    <p:column style="max-width: 150px; min-width: 130px">
-                                        <f:facet name="header">  
-                                            <p:outputLabel value="Fecha" />  
-                                        </f:facet>  
-                                        #{var.seminario.fechaInicio.dayOfMonth().get()}/#{var.seminario.fechaInicio.monthOfYear().getAsText()}/#{var.seminario.fechaInicio.year().get()}
-                                    </p:column> 
-                                </p:dataTable>
-                            </h:panelGroup>
-                        </div>
+                                <p:column style="width: 200px">
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Seminario" />  
+                                    </f:facet>  
+                                    #{var.seminario.tituloPonencia}                         
+                                </p:column>
+                                <p:column style="width: 200px">
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Asistente" />  
+                                    </f:facet>  
+                                    #{var.nombre} #{var.apellidoPaterno} #{var.apellidoMaterno}                         
+                                </p:column>
+                                <p:column style="width: 200px">
+                                    <f:facet name="header">  
+                                        <p:outputLabel value="Fecha" />  
+                                    </f:facet>  
+                                    <h:outputLabel value="#{var.seminario.fechaInicio.toDate()}"  
+                                                   style="text-transform: capitalize;font-weight: normal;" >
+                                        <f:convertDateTime  pattern="dd/MMMMM/yyyy" locale="ES" />
+                                    </h:outputLabel>                                   
+                                </p:column> 
+                            </p:dataTable>
+                        </h:panelGroup>
                     </div>
-                </h:form>
-            </div>
+                </div>
+            </h:form>
 
         </div>
         <!-- /.container -->
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $("#consultarMisConstancias").addClass("active");
             });
         </script>
+
     </ui:define>
 
 </ui:composition>

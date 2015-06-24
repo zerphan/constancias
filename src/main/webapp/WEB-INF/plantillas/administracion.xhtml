@@ -20,7 +20,7 @@
         <link href="#{facesContext.externalContext.requestContextPath}/resources/css/estilo.css" rel="stylesheet"/>
     </h:head>
     <h:body> 
-        <header>
+        <header style="margin-bottom: 10px;">
             <nav class="navbar navbar-default navbar-fixed-top " role="navigation">
                 <div class="container">
                     <!-- Brand and toggle get grouped for better mobile display -->
@@ -95,7 +95,7 @@
                             </li>
                             <li class="dropdown small">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="glyphicon glyphicon-user colorRojo"/> Mi cuenta <b class="caret"></b></a>
+                                    <i class="glyphicon glyphicon-user colorPoli"/> Mi cuenta <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     <li> 
                                         <h:link outcome="gestionarCuenta.xhtml?faces-redirect=true"><i class="glyphicon glyphicon-wrench colorRojo"/> Configurar cuenta</h:link>
@@ -171,15 +171,12 @@
             </footer>
         </ui:insert>
 
-        <p:ajaxStatus style="position:fixed;right:10px;bottom:10px" >  
-            <f:facet name="start">  
-                <p:graphicImage library="img" name="ajax-loader-circle.gif" />  
-            </f:facet>  
-            <f:facet name="complete">  
-                <h:outputText value="" />  
-            </f:facet>  
-        </p:ajaxStatus>
-
+        <!-- START AJAX PROCESSING -->
+        <p:ajaxStatus widgetVar="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <i class="fa fa-spinner fa-spin colorVerde2 fa-2x"></i> Procesando
+        </p:dialog>
+        <!-- END AJAX PROCESSING -->
 
         <p:confirmDialog global="true" 
                          style="max-width: 700px; top: 50%!important; margin-top: -150px;">
@@ -224,6 +221,6 @@
 
 
         </script>
-       
+
     </h:body>
 </html>

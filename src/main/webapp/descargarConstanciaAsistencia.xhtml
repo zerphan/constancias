@@ -15,7 +15,7 @@
 
     <ui:define name="contenido">
         <h:panelGroup rendered="#{not empty(asistentesBean.seminariosEnEjecucionList) and (asistentesBean.currentAsistente.seminario.fechaTermino.toDate() gt jsfUtil.fechaActual) }">
-            <section class="bg-sem4 bg-responsivo">
+            <section class="bg-mural bg-responsivo">
                 <div class="col-sm-6 col-sm-offset-3 text-center">
                     <div class="textoInBg" >
                         <h3 style="color: white">CONSTANCIA GENERADA EXITOSAMENTE</h3>
@@ -26,12 +26,12 @@
                         <p>
                             <strong>Seminario: </strong> #{asistentesBean.currentAsistente.seminario.tituloPonencia} 
                         </p>
-
                         <h:form>  
-                            <p:commandLink action="#{asistentesBean.exportarConstancia()}"
-                                           ajax="false">
-                                <button class="btn btn-primary">
-                                    <i class="fa fa-download"/> Descargar
+                            <p:commandLink actionListener="#{asistentesBean.eventDownloadAttendanceCertificate(asistentesBean.currentAsistente)}"
+                                           ajax="false"
+                                           target="_blank">
+                                <button class="btn btn-primary" style="margin-top:10px; width: 300px">
+                                    <i class="fa fa-download"/> Descargar constancia
                                 </button>
                             </p:commandLink>
                         </h:form>
@@ -43,28 +43,13 @@
                     <br/><br/>
                     <div class="alert alert-success alert-dismissable">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        Tu constancia ha sido generada exitosamente!
+                        Registro exitoso, recuerda que puedes consultar consultar todas tus asistencias
+                        <h:link outcome="consultarMisAsistencias.xhtml?faces-redirect=true">
+                            aquì. </h:link>
                     </div>
-
-                    <!--
-                    <div class="text-right">  
-                        <p>
-                            <a type="button" href="generarConstanciaAsistencia.xhtml" class="btn btn-xs btn-default">
-                                <i class="fa fa-arrow-circle-left"/> Regresar</a>
-                        </p>
-                    </div>
-    
-                    <hr/>
-                    -->
                     <br/>
-                    <p:media value="/kljsadf.constanciaAsistencia?id=#{asistentesBean.currentAsistente.idAsistente}"
-                             player="pdf"
-                             width="100%"
-                             height="500px"/>
-
                     <br/>
                     <hr/>
-
                     <div class="text-center">
                         <p:dataTable value="#{asistentesBean.asistentesList}" var="asistente"
                                      emptyMessage="No se han registrado asistentes a éste seminario" 
@@ -115,7 +100,7 @@
             </h:form>
         </h:panelGroup>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 //$("#proximosSeminarios").addClass("active");
             });
         </script>

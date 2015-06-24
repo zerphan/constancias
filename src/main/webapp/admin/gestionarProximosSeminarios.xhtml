@@ -11,22 +11,11 @@
         <f:viewAction action="#{seminariosBean.findProximosSeminarios()}" /> 
     </f:metadata> 
     <ui:define name="contenido">
-        <div>            
-            <section class="bg-escompasto bg-responsivo">
-                <div class="col-sm-6 col-sm-offset-3 text-center">
-                    <div class="textoInBg" >
-                        <h2 style="color: white">PRÓXIMOS SEMINARIOS</h2>
-                        <hr/>
-                        <p class="justificado label label-info"> ADMINISTRACIÓN</p>
-                    </div>
-                </div>
-            </section>
-        </div>
         <div class="container">
             <p:growl autoUpdate="true"  life="1500"/>
             <h1> Próximos Seminarios</h1>           
             <hr/>            
-            <p class="justificado">
+            <p class="text-justify">
                 <strong class="">Instrucciones:</strong> En ésta sección se muestra una tabla con los  próximos seminarios que han sido agendados, 
                 puedes editar cualquier dato de estos o eliminarlos seleccionando la acción correspondiente. Si deseas agendar un nuevo seminario pulsa en el botón registrar seminario.
             </p><br/>
@@ -53,69 +42,50 @@
                     <f:facet name="header">  
                         <p:outputLabel value="Próximos seminarios"/>  
                     </f:facet>  
-                    <p:column style="padding-bottom: 10px;padding-top: 10px;">
+                    <p:column style="padding-bottom: 10px;padding-top: 10px; width: 50px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Id" />  
                         </f:facet>  
                         #{var.idSeminario}
                     </p:column> 
-                    <p:column style="min-width: 400px">
+                    <p:column style="width: 400px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Ponencia" />  
                         </f:facet>  
                         #{var.tituloPonencia}
                     </p:column> 
-                    <p:column style="min-width: 200px">
+                    <p:column style="width: 200px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Ponente" />  
                         </f:facet>  
                         #{var.ponente.nombreCompleto}                         
                     </p:column>
-                    <p:column style="max-width: 95px">
+                    <p:column style="width: 95px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Código Seguridad" />  
                         </f:facet>  
                         #{var.codigoSeguridad}
                     </p:column> 
-                    <p:column style="max-width: 130px">
+                    <p:column style="width: 150px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Fecha" />  
                         </f:facet>  
-                        #{var.fechaInicio.dayOfMonth().get()} / #{var.fechaInicio.monthOfYear().getAsText()} /#{var.fechaInicio.year().get()}
+                        <h:outputLabel value="#{var.fechaInicio.toDate()}"  
+                                       style="text-transform: capitalize;font-weight: normal;"
+                                       styleClass="colorNegro">
+                            <f:convertDateTime  pattern="EEE, dd/MMMMM/yyyy" locale="ES" />
+                        </h:outputLabel>
                     </p:column> 
-                    <p:column>
+                    <p:column style="width:100px;">
                         <f:facet name="header">  
                             <p:outputLabel value="Hora" />  
                         </f:facet>  
-                        #{var.fechaInicio.hourOfDay().getAsText(locale)}:#{var.fechaInicio.minuteOfHour().get()} hrs
-                        <!--
-                       <p:outputLabel value="#{var.fechaInicio.toDate()}" style="padding: 5px">
-                           <f:convertDateTime  pattern="hh:mm a" />
-                       </p:outputLabel>
-                        -->
+                        <h:outputLabel value="#{var.fechaInicio.toDate()}"  
+                                       style="text-transform: capitalize;font-weight: normal;"
+                                       styleClass="text-colorNegro">
+                            <f:convertDateTime  pattern="hh:mm a" locale="ES" />
+                        </h:outputLabel>
                     </p:column>
-                    <p:column rendered="false">
-                        <f:facet name="header">
-                            <p:outputLabel value="Acción" />  
-                        </f:facet>                        
-                        <h:link outcome="editarSeminario" >
-                            <span class="glyphicon glyphicon-pencil"  title="Editar seminario: #{var.idSeminario}"/>
-                            <f:param name="id" value="#{var.idSeminario}" />
-                            <f:param name="paginaRetorno" value="gestionarProximosSeminarios.xhtml" />
-                        </h:link>
-                        <p:spacer/>
-                        <p:commandLink  action="#{seminariosBean.eliminar()}" 
-                                        update="@([id$=tablaSeminariosProximos])"
-                                        ajax="true"                           
-                                        title="Eliminar"
-                                        style="text-decoration: none;" >
-                            <f:setPropertyActionListener value="#{var}"                                                         
-                                                         target="#{seminariosBean.currentSeminario}"/>
-                            <span class="glyphicon glyphicon-trash"/>
-                            <p:confirm header="Confirmación" message="¿Está seguro que lo desea eliminar?" 
-                                       icon="ui-icon-alert"/>
-                        </p:commandLink>
-                    </p:column> 
                 </p:dataTable>
             </h:form>
         </div>
@@ -123,47 +93,57 @@
         <!-- START MODAL ACCIONES -->
         <div class="modal fade" id="modalAccion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
-                <h:form id="formModalAccion" rendered="#{(seminariosBean.currentSeminario ne null) and (seminariosBean.currentSeminario.idSeminario ne null)}">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel"> ¿Qué acción desea realizar?</h4>
-                        </div>
-                        <div class="modal-body">                                       
-                            <div class="">
-                                <p><strong> Seminario:</strong> 
-                                    <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
-                                </p>  
-                                <p><strong> Ponente:</strong> 
-                                    <i>#{seminariosBean.currentSeminario.ponente.nombreCompleto} </i>
-                                </p>                               
+                <div class="modal-content">
+                    <h:panelGroup id="formModalAccion">                    
+                        <h:form  rendered="#{(seminariosBean.currentSeminario ne null) and (seminariosBean.currentSeminario.idSeminario ne null)}"> 
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel"> ¿Qué acción desea realizar?</h4>
                             </div>
-                            
-                            <h:link outcome="editarSeminario" >
-                                <button type="button" class="btn btn-info">
-                                    <i class="glyphicon glyphicon-edit"/> Editar</button>
-                                <f:param name="id" value="#{seminariosBean.currentSeminario.idSeminario}" />
-                                <f:param name="paginaRetorno" value="gestionarProximosSeminarios.xhtml" />
-                            </h:link>     
+                            <div class="modal-body">                                       
+                                <div class="">
+                                    <p><strong> Seminario:</strong> 
+                                        <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
+                                    </p>  
+                                    <p><strong> Ponente:</strong> 
+                                        <i>#{seminariosBean.currentSeminario.ponente.nombreCompleto} </i>
+                                    </p>                               
+                                </div>
+                                <!-- EDITAR SEMINARIO-->
+                                <h:link outcome="editarSeminario" >
+                                    <button type="button" class="btn btn-info btn-block">
+                                        <i class="fa fa-pencil"/> Editar</button>
+                                    <f:param name="id" value="#{seminariosBean.currentSeminario.idSeminario}" />
+                                    <f:param name="paginaRetorno" value="gestionarProximosSeminarios.xhtml" />
+                                </h:link>
+                                <!-- DESCARGA DE CONSTANCIA DE PONENTE-->
+                                <br/>
+                                <p:commandLink  oncomplete="hideModalAccion()"
+                                                actionListener="#{documentosBean.eventDownloadOratorCertificate(seminariosBean.currentSeminario)}"
+                                                ajax="false" 
+                                                style="text-decoration:none;color:white" 
+                                                target="_blank">
+                                    <button type="button" class="btn fondoPoli btn-block" data-dismiss="modal"> 
+                                        <i class="fa fa-download"/> Descargar Constancia Ponente</button>
+                                </p:commandLink>
+                                <br/>                            
+                                <!-- ELIMINAR SEMINARIO-->
+                                <p:commandLink  oncomplete="hideModalAccion()"
+                                                update="@([id$=formModalEliminar])"
+                                                ajax="true" 
+                                                style=" text-decoration: none;" >                                
+                                    <button type="button" class="btn btn-danger  btn-block" data-toggle="modal" data-target="#modalEliminar"> 
+                                        <span class="glyphicon glyphicon-trash"/> Eliminar</button>
+                                </p:commandLink>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/> Cancelar</button>
 
-                            <p:commandLink  oncomplete="hideModalAccion()"
-                                            update="@([id$=formModalEliminar])"
-                                            ajax="true" 
-                                            style=" text-decoration: none;" >                                
-                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalEliminar"> 
-                                    <span class="glyphicon glyphicon-trash"/> Eliminar</button>
-                            </p:commandLink>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/> Cancelar</button>
-
-                        </div>
-                    </div>
-                    <!-- /.modal-content -->
-                </h:form>
-            </div>
-            <!-- /.modal-dialog -->
+                            </div>
+                        </h:form>
+                    </h:panelGroup>
+                </div><!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
         </div>
         <!-- END MODAL ACCIONES -->
 
@@ -177,7 +157,7 @@
                             <h4 class="modal-title" id="myModalLabel"> CONFIRMACIÓN</h4>
                         </div>
                         <div class="modal-body">                                       
-                            <div class="">
+                            <div class="text-justify">
                                 <p><strong> Seminario:</strong> 
                                     <i>#{seminariosBean.currentSeminario.tituloPonencia} </i>
                                 </p>  
@@ -195,10 +175,10 @@
                                             ajax="true" 
                                             style=" text-decoration: none;" >
 
-                                <button type="button" class="btn btn-danger" data-dismiss="modal"> 
+                                <button type="button" class="btn btn-danger" style="margin-bottom: 10px;" data-dismiss="modal"> 
                                     <span class="glyphicon glyphicon-trash"/> Si, eliminar</button>
                             </p:commandLink>
-                            <button type="button" class="btn btn-default" data-dismiss="modal"> <i class="glyphicon glyphicon-remove"/> No, regresar</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"  style="margin-bottom: 10px;"> <i class="glyphicon glyphicon-remove"/> No, regresar</button>
 
                         </div>
                     </div>

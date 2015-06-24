@@ -22,8 +22,7 @@
         <link href="#{facesContext.externalContext.requestContextPath}/resources/css/estilo.css" rel="stylesheet"/>
     </h:head>
     <h:body> 
-        <header>
-
+        <header style="margin-bottom: 10px;">
             <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div class="container">
                     <!-- Brand and toggle get grouped for better mobile display -->
@@ -64,7 +63,7 @@
 
                             <li id="loginAdministrador" class="small">
                                 <h:link outcome="loginAdministrador.xhtml?faces-redirect=true">
-                                    <i class="glyphicon glyphicon-user colorRojo"/> Login Administrador</h:link>
+                                    <i class="glyphicon glyphicon-user colorPoli"/> Login Administrador</h:link>
                             </li>
 
                         </ul>
@@ -73,49 +72,11 @@
                 </div>
                 <!-- /.container -->
             </nav>
-            <!--
-            <div class="container-fluid fondoPoli" style="padding-bottom: 55px; padding-top: 75px; margin-bottom: 40px">
-                <div class="cabeceraEscritorio " style="padding:10px 30px 10px 10px;">
-                    <div class="col-md-12 " >
-                        <div class=" column pull-left ">
-                            <p:graphicImage library="img" name="ipnBlanco.png" height="70" styleClass="pull-left" style="margin-right:20px"/>
-                            <h4 class="text-left" style=" color:#fff">SISTEMA DE SEMINARIOS Y CONSTANCIAS <br/>
-                                <small> <i>IPN | La Técnica al Servicio de la Patria</i></small></h4>
-                        </div>                              
-                        <div class=" column pull-right ">
-                            <h5 class="text-right " style="display:inline-block; color:#fff" >ESCUELA SUPERIOR DE CÓMPUTO <br/> <small>ESCOM </small></h5>
-                            <p:graphicImage library="img" name="escomBlanco.png" height="60" styleClass="pull-right " style="margin-right:10px"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="cabeceraMobilLandscape " style="padding:10px 10px 10px 0px;">
-                    <div class="col-md-12 " style="color:#fff; text-align: center;"> 
-                        <div class="pull-left">
-                            <h5 class="text-left " style="display:inline-block; color:#fff; margin-left: 20px" >SISTEMA DE SEMINARIOS Y CONSTANCIAS<br/><small>Escuela Superior de Cómputo</small> </h5>
-                        </div>
-                        <div class="pull-right">     
-                            <p:graphicImage library="img" name="ipnBlanco.png" height="50" styleClass="pull-left "/>                    
-                            <p:graphicImage library="img" name="escomBlanco.png" height="50" styleClass="pull-left "/>                   
-                        </div>                
-                    </div>
-                </div>
-                <div class="cabeceraMobilSmall " style="padding:10px 0px 10px 0px;">
-                    <div class="col-md-12 " style="color:#fff; ">
-                        <div class="column pull-left ">     
-                            <p:graphicImage library="img" name="escomBlanco.png" height="40" styleClass="pull-left "/>
-                            <h5 class="text-left " style="display:inline-block; color:#fff" >SISTEMA DE SEMINARIOS<br/><small>Escuela Superior de Cómputo</small> </h5>
-                        </div>                
-                    </div>
-                </div>
-            </div>
-            -->
         </header>
 
         <ui:insert name="contenido"> </ui:insert>
-
-        <hr/>
         <ui:insert name="pie"> 
-            <footer >
+            <footer  class="bottom" style="margin-top: 200px;">
                 <div class="container-fluid fondoNegro" style="height: 400px; color: white; position: relative; bottom: -60px;">
                     <div style="top:20%; position: relative">                   
                         <p class="text-center">  
@@ -130,17 +91,14 @@
                 </div>
             </footer>
         </ui:insert>
-        <p:ajaxStatus style="position:fixed;right:20px;bottom:50px" widgetVar="ajaxStatus">  
-            <f:facet name="start">  
-                <p:panel header="Sistema de Seminarios" >
-                    <p:graphicImage library="img" name="ajax-loader-pacman.gif" />  
-                    <div class="label label-info"> Procesando...</div>
-                </p:panel>
-            </f:facet>  
-            <f:facet name="complete">  
-                <h:outputText value="" />  
-            </f:facet>  
-        </p:ajaxStatus>  
+
+        <!-- START AJAX PROCESSING -->
+        <p:ajaxStatus widgetVar="ajaxStatus" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <i class="fa fa-spinner fa-spin colorVerde2 fa-2x"></i> Procesando
+        </p:dialog>
+        <!-- END AJAX PROCESSING -->
+
 
         <!-- JavaScript -->
         <script src="#{facesContext.externalContext.requestContextPath}/resources/js/bootstrap.js"></script>

@@ -7,7 +7,7 @@ public class Constantes {
     public static final long HORA_EN_MILISEGUNDOS = 60L * 60L * 1000L;
     public static final int HORA_LIMITE_INFERIOR_SEMINARIO = 0;
     public static final int HORA_LIMITE_SUPERIOR_SEMINARIO = 23;
-    public static final int MINUTOS_TOLERANCIA = 90;
+    public static final int MINUTOS_TOLERANCIA = 105;
     public static final String FILE_PUBLICIDAD_SEMINARIO_JASPER_WINDOWS = "resources\\jasperReports\\publicidadSeminario.jasper";
     public static final String FILE_CONSTANCIA_ASISTENCIA_JASPER_WINDOWS = "resources\\jasperReports\\constanciaAsistencia2.jasper";
     public static final String FILE_DOCUMENTO_PROBATORIO_JASPER_WINDOWS = "resources\\jasperReports\\documentoProbatorio.jasper";

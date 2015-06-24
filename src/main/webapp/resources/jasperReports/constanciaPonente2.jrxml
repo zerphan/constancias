@@ -18,7 +18,7 @@
 		<band height="612" splitType="Stretch">
 			<image scaleImage="FillFrame">
 				<reportElement x="0" y="0" width="792" height="612" uuid="e37e7e99-7bb7-40ff-824d-119d80df2628"/>
-				<imageExpression><![CDATA["\\fondoConstanciaPonente1.png"]]></imageExpression>
+				<imageExpression><![CDATA["/fondoConstanciaPonente1.png"]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="130" y="201" width="638" height="28" forecolor="#000000" uuid="119d081e-330f-4f0c-a1b2-c7e4fe456c8f"/>
@@ -84,7 +84,7 @@
 			</line>
 			<image>
 				<reportElement x="404" y="440" width="88" height="66" uuid="b7277117-2e42-4d17-9e95-fffe1395f7e4"/>
-				<imageExpression><![CDATA["\\escomlogo.png"]]></imageExpression>
+				<imageExpression><![CDATA["/escomlogo.png"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="146" y="259" width="608" height="20" uuid="23660e99-c84d-429e-b8d4-217af476d31d"/>

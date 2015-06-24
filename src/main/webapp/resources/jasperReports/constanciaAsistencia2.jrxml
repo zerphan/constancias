@@ -55,7 +55,7 @@
 			</staticText>
 			<image>
 				<reportElement x="352" y="463" width="88" height="66" uuid="23f4cec2-57a1-482e-bf3b-789b93d95efe"/>
-				<imageExpression><![CDATA["\\escomlogo.png"]]></imageExpression>
+				<imageExpression><![CDATA["/escomlogo.png"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="92" y="410" width="608" height="20" uuid="39b79c44-3816-43f9-804e-53b2d5c93102"/>

@@ -32,63 +32,64 @@
                         </div>
                     </h:panelGroup>
                     <ui:repeat value="#{seminariosBean.listSeminarios}" 
-                               var="seminarios" >  
-
+                               var="var" >  
                         <div class="well well-lg"> 
-                            <div class="caption-full">
-                                <!-- <h:graphicImage library="img" name="periodicosSmall.png" width="50px"/><p:spacer/>-->                              
+                            <div class="caption-full">                          
                                 <div class="small">
                                     <i class="fa fa-clock-o"/>  <p:spacer/><p:spacer/>
-                                    <h:outputLabel value="#{seminarios.fechaInicio.toDate()}"  
+                                    <h:outputLabel value="#{var.fechaInicio.toDate()}"  
                                                    style="text-transform: capitalize"
                                                    styleClass="text-muted">
-                                        <f:convertDateTime  pattern="EEE, dd/MMMMM/yyyy , hh:mm a"  />
+                                        <f:convertDateTime  pattern="EEE, dd/MMMMM/yyyy , hh:mm a" locale="ES" />
                                     </h:outputLabel>
-
                                 </div>
-                                <h5 class="" style="font-weight: bold"> 
-                                    #{seminarios.tituloPonencia} 
-                                </h5>                                 
-                                <div class="small">
-                                    <i class="glyphicon glyphicon-user colorRojo"/>  
-                                    #{seminarios.ponente.nombreCompleto}
+                                <h4 class="" style="font-weight: bold"> 
+                                    #{var.tituloPonencia} 
+                                </h4> 
+                                <div>
+                                    <i class="glyphicon glyphicon-user colorPoli"/>
+                                    <span style="font-size: 16px">
+                                        #{var.ponente.nombreCompleto}
+                                    </span>
                                 </div>
-                                <div class="small">
-                                    <i class=" fa fa-map-marker"/> #{seminarios.direccion}
+                                <div >
+                                    <i class=" fa fa-map-marker colorPoli"/>
+                                    <span style="font-size: 16px">
+                                        #{var.direccion}
+                                    </span>
                                 </div>
                                 <br/>
                                 <h:form>
-                                    <!-- REDIRECCION SI EL SEMINARIO ESTA EN EJECUCION -->
-                                    <h:panelGroup rendered="#{asistentesBean.seminariosEnEjecucionList.contains(seminarios)}">                                       
-                                        <a href="registrarAsistencia.xhtml">  
-                                            <div type="button" class="btn btn-xs btn-primary">
-                                                <i class="glyphicon glyphicon-user"/> Registrar mi asistencia
-                                            </div> 
-                                        </a>
-                                    </h:panelGroup>
-                                    
-                                    <h:link outcome="consultarSeminario" styleClass="small" title="Más información, resumen del seminario, cv del ponente etc.">
-                                        <button type="button" class="btn btn-xs btn-default">
-                                            <i class="fa fa-eye"/> Más información
-                                        </button>
-                                        <f:param name="id" value="#{seminarios.idSeminario}" />
-                                    </h:link>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <!-- REDIRECCION SI EL SEMINARIO ESTA EN EJECUCION -->
+                                            <h:panelGroup rendered="#{asistentesBean.seminariosEnEjecucionList.contains(var)}">                                       
+                                                <a href="registrarAsistencia.xhtml">  
+                                                    <div type="button" class="btn btn-sm btn-primary" style="margin-top:10px; width: 200px" >
+                                                        <i class="glyphicon glyphicon-user"/> Registrar mi asistencia
+                                                    </div> 
+                                                </a>
+                                            </h:panelGroup>
 
-                                    <p:commandLink  action="#{documentosBean.eventoExportPublicidadPDF(actionEvent)}"
-                                                    ajax="false"
-                                                    title="Descargar seminario:"
-                                                    onstart="PF('ajaxStatus').show()"
-                                                    style=" text-decoration: none;"
-                                                    >
-                                        <f:setPropertyActionListener value="#{seminarios}"                                                         
-                                                                     target="#{documentosBean.seminario}"/>
-                                        <div type="button" class="btn btn-xs btn-default">
-                                            <i class="fa fa-download"/> Descargar publicidad
-                                        </div>
-                                    </p:commandLink>
-
+                                            <h:link outcome="consultarSeminario" styleClass="small" title="Más información, resumen del seminario, cv del ponente etc.">
+                                                <button type="button" class="btn btn-sm btn-default" style="margin-top:10px; width: 200px">
+                                                    <i class="fa fa-eye"/> Más información
+                                                </button>
+                                                <f:param name="id" value="#{var.idSeminario}" />
+                                            </h:link>
+                                            <p:commandLink  actionListener="#{documentosBean.eventExportPublicity(var)}"
+                                                            ajax="false"
+                                                            title="Da click aquì para descargar la publicidad del seminario"
+                                                            style=" text-decoration: none;"
+                                                            target="_blank"
+                                                            >
+                                                <div type="button" class="btn btn-sm btn-default" style="margin-top:10px; width: 200px">
+                                                    <i class="fa fa-download"/> Descargar publicidad
+                                                </div>
+                                            </p:commandLink>
+                                        </div> 
+                                    </div>
                                 </h:form>
-
                             </div>                    
                         </div>
                         <hr/><br/>
@@ -98,10 +99,10 @@
         </div>
         <!-- /.container -->
 
-
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $("#proximosSeminarios").addClass("active");
+                $("#mensajeDescargaPublicidad").hide();
             });
         </script>
     </ui:define>

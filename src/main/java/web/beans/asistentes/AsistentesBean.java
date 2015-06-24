@@ -9,14 +9,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 import modelo.CodigoQR;
 import modelo.entidades.Asistente;
 import modelo.entidades.DefinicionCodigoQR;
@@ -28,9 +31,14 @@ import modelo.facade.SeminarioFacade;
 import net.glxn.qrgen.image.ImageType;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.primefaces.context.RequestContext;
@@ -38,6 +46,8 @@ import org.primefaces.event.data.FilterEvent;
 import web.beans.documentos.DocumentosBean;
 import web.beans.seminarios.SeminariosBean;
 import web.beans.util.JsfUtil;
+import static web.beans.util.JsfUtil.addErrorMessage;
+import static web.beans.util.JsfUtil.getPathAttendanceListJasper;
 import static web.beans.util.JsfUtil.getResponse;
 
 /**
@@ -92,13 +102,13 @@ public class AsistentesBean extends JsfUtil
         //System.out.println("Entro a find Seminarios en ejecucion");
         seminariosEnEjecucionList = seminarioFacade.findSeminariosEnEjecucion();
         //System.out.println("Size en ejecucion:"+seminariosEnEjecucionList);
-        if (!seminariosEnEjecucionList.isEmpty() && seminariosEnEjecucionList != null) {
+        if (seminariosEnEjecucionList != null && !seminariosEnEjecucionList.isEmpty()) {
             currentSeminario = seminariosEnEjecucionList.get(0);
             currentAsistente.setSeminario(currentSeminario);
             findAllByIdSeminario();
             // System.out.println("No es nulo:"+currentSeminario.getTituloPonencia());
         } else {
-            //System.out.println("Es nulo");
+            Logger.getLogger(AsistentesBean.class.getName()).log(Level.INFO, null, "No hay seminarios en ejecuciòn");
             currentSeminario = null;
         }
 
@@ -115,10 +125,12 @@ public class AsistentesBean extends JsfUtil
             if (asistentesList == null) {
                 JsfUtil.addErrorMessage("No existen constancias para este email");
                 asistentesList.clear();
+                listFilteredAsistentes.clear();
             } else {
                 if (asistentesList.isEmpty()) {
                     JsfUtil.addErrorMessage("No existen constancias para este email");
                     asistentesList.clear();
+                    listFilteredAsistentes.clear();
                 } else {
                     listFilteredAsistentes = asistentesList;
                     calcularCreditos();
@@ -140,6 +152,10 @@ public class AsistentesBean extends JsfUtil
     public void findByIdGet() {
         try {
             currentAsistente = asistenteFacade.find(Integer.parseInt(idGet));
+            if (currentAsistente == null) {
+                redirectFromContextPath("consultarMisAsistencias.xhtml");
+                return;
+            }
             currentSeminario = currentAsistente.getSeminario();
         } catch (NumberFormatException e) {
             JsfUtil.addErrorMessage("Error al obtener el asistente" + idGet + ":" + e.toString());
@@ -173,7 +189,7 @@ public class AsistentesBean extends JsfUtil
         if (estaRegistrado(currentAsistente)) {
             addErrorMessage("El nombre ó email del asistente ya está registrado");
         } else {
-            if (registrar()) {                
+            if (registrar()) {
                 addSuccessMessage("El asistente registrado correctamente");
             } else {
                 addErrorMessage("Error al registrar el asistente");
@@ -182,41 +198,99 @@ public class AsistentesBean extends JsfUtil
     }
 
     public boolean registrar() {
-        capitalizarNombreCurrentAsistente();
-        currentAsistente.setFecha(new Date());
-        asistenteFacade.create(currentAsistente);
-        
-        Map hm = (Map) new HashMap();
-        byte[] pdfBytes;
-        hm.put("NOMBRE_ASISTENTE", currentAsistente.getNombre()
-                + " " + currentAsistente.getApellidoPaterno()
-                + " " + currentAsistente.getApellidoMaterno());
-        hm.put("TITULO_SEMINARIO", currentSeminario.getTituloPonencia());
-        hm.put("LUGAR_SEMINARIO", currentSeminario.getDireccion());
-        hm.put("FECHA_SEMINARIO", currentSeminario.getFechaInicio().toDate());
-        InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
-                generarCodigoQR(currentAsistente));
-        hm.put("IMAGEN_CODIGOQR", inputStreamImagenCodigoQR);
         try {
-            print = JasperFillManager.fillReport(getPathConstanciaAsistenciaJasper(), hm, new JREmptyDataSource());
-            pdfBytes = JasperExportManager.exportReportToPdf(print);
-            currentAsistente.setArchivoConstancia(pdfBytes);
-            asistenteFacade.edit(currentAsistente);
-            /*
-             File archivo = new File("C:\\Users\\Gandhi\\Desktop\\Constancia.pdf");
-             FileOutputStream fos = new FileOutputStream(archivo);
-             fos.write(currentAsistente.getArchivoConstancia());
-             fos.flush();
-             fos.close();
-             */
+            capitalizarNombreCurrentAsistente();
+            currentAsistente.setFecha(new Date());
+            asistenteFacade.create(currentAsistente);
             return true;
-        } catch (JRException ex) {
-            Logger.getLogger(DocumentosBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(AsistentesBean.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 
+        /*
+         Map hm = (Map) new HashMap();
+         byte[] pdfBytes;
+         hm.put("NOMBRE_ASISTENTE", currentAsistente.getNombre()
+         + " " + currentAsistente.getApellidoPaterno()
+         + " " + currentAsistente.getApellidoMaterno());
+         hm.put("TITULO_SEMINARIO", currentSeminario.getTituloPonencia());
+         hm.put("LUGAR_SEMINARIO", currentSeminario.getDireccion());
+         hm.put("FECHA_SEMINARIO", currentSeminario.getFechaInicio().toDate());
+         InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
+         generarCodigoQR(currentAsistente));
+         hm.put("IMAGEN_CODIGOQR", inputStreamImagenCodigoQR);
+         try {
+         print = JasperFillManager.fillReport(getPathConstanciaAsistenciaJasper(), hm, new JREmptyDataSource());
+         pdfBytes = JasperExportManager.exportReportToPdf(print);
+         currentAsistente.setArchivoConstancia(pdfBytes);
+         asistenteFacade.edit(currentAsistente);
+         return true;
+         } catch (JRException ex) {
+         Logger.getLogger(AsistentesBean.class.getName()).log(Level.SEVERE, null, ex);
+         return false;
+         }
+         */
     }
 
+    /**
+     * Method than handles request of download the attendance list
+     *
+     * @param attendencer
+     */
+    public void eventDownloadAttendanceCertificate(Asistente attendencer) {
+        exportAttendanceCertificate(attendencer);
+
+    }
+
+    /**
+     * Method than generates the attendance list and response with a PDF file
+     *
+     * @param attendencer
+     */
+    private void exportAttendanceCertificate(Asistente attendence) {
+        JasperPrint jasperPrint;
+        Map hm = (Map) new HashMap();
+        byte[] pdfBytes;
+        List list;
+        JRExporter exporter;
+        JRBeanCollectionDataSource dataSource;
+        // Getting HttpServletResponse
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        // Setting parameters
+        hm.put(JRParameter.REPORT_LOCALE, new Locale("ES"));
+        hm.put("NOMBRE_ASISTENTE", attendence.getNombre()
+                + " " + attendence.getApellidoPaterno()
+                + " " + attendence.getApellidoMaterno());
+        hm.put("TITULO_SEMINARIO", attendence.getSeminario().getTituloPonencia());
+        hm.put("LUGAR_SEMINARIO", attendence.getSeminario().getDireccion());
+        hm.put("FECHA_SEMINARIO", attendence.getSeminario().getFechaInicio().toDate());
+        InputStream inputStreamImagenCodigoQR = new ByteArrayInputStream(
+                generarCodigoQR(attendence));
+        hm.put("IMAGEN_CODIGOQR", inputStreamImagenCodigoQR);
+        try {
+            jasperPrint = JasperFillManager.fillReport(getPathConstanciaAsistenciaJasper(), hm, new JREmptyDataSource());
+        } catch (JRException ex) {
+            Logger.getLogger(AsistentesBean.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        // Response settings
+        response.reset();
+        response.setContentType("application/pdf");
+        response.addHeader("Content-disposition", "attachment;filename=attendanceCertificate" + attendence.getIdAsistente() + ".pdf");
+        exporter = new JRPdfExporter();
+        // Export the file
+        try {
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, response.getOutputStream());
+            exporter.exportReport();
+        } catch (IOException | JRException ex) {
+            Logger.getLogger(AsistentesBean.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            context.responseComplete();
+        }
+    }
 
     public void exportarConstancia() {
         if (currentAsistente == null) {
